@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { FaPlus, FaPencilAlt } from 'react-icons/fa';
+import { FaPlus, FaPencilAlt, FaTrash } from 'react-icons/fa';
 
 function RecipeList() {
   const [recipes, setRecipes] = useState([]);
@@ -22,6 +22,13 @@ function RecipeList() {
 
   const handleEditRecipe = (id) => {
     navigate(`/edit/${id}`);
+  };
+
+  const handleDeleteRecipe = (id) => {
+    axios.delete(`/api/recipes/${id}`)
+      .then(() => {
+        setRecipes(recipes.filter(recipe => recipe.id !== id));
+      });
   };
 
   const handleSelectRecipe = (id) => {
@@ -67,6 +74,9 @@ function RecipeList() {
               <td>
                 <button onClick={() => handleEditRecipe(recipe.id)} style={{ display: 'flex', alignItems: 'center' }}>
                   <FaPencilAlt />
+                </button>
+                <button onClick={() => handleDeleteRecipe(recipe.id)} style={{ display: 'flex', alignItems: 'center' }}>
+                  <FaTrash />
                 </button>
               </td>
             </tr>
