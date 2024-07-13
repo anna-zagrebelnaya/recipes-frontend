@@ -5,6 +5,8 @@ import axios from 'axios';
 function AddRecipe() {
   const [name, setName] = useState('');
   const [ingredients, setIngredients] = useState([{ productName: '', unit: '', quantity: 0 }]);
+  const [description, setDescription] = useState('');
+  const [image, setImage] = useState(null);
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -19,6 +21,8 @@ function AddRecipe() {
             unit: ingredient.product.unit,
             quantity: ingredient.quantity
           })));
+          setDescription(recipe.description);
+          setImage(recipe.imageUrl);
         });
     }
   }, [id]);
@@ -37,22 +41,38 @@ function AddRecipe() {
     setIngredients(newIngredients);
   };
 
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]);
+  };
+
   const handleSubmit = () => {
-    const recipe = {
+    const formData = new FormData();
+    formData.append('recipe', new Blob([JSON.stringify({
       name,
       ingredients: ingredients.map(ingredient => ({
         product: { name: ingredient.productName, unit: ingredient.unit },
         quantity: parseInt(ingredient.quantity, 10)
-      }))
-    };
+      })),
+      description
+    })], {
+      type: 'application/json'
+    }));
+    if (image) {
+      formData.append('image', image);
+    }
+
     if (id) {
-      axios.put(`/api/recipes/${id}`, recipe)
+      axios.put(`/api/recipes/${id}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
         .then(response => {
           console.log(response.data);
           navigate('/');
         });
     } else {
-      axios.post('/api/recipes', recipe)
+      axios.post('/api/recipes', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
         .then(response => {
           console.log(response.data);
           navigate('/');
@@ -101,6 +121,14 @@ function AddRecipe() {
         </div>
       ))}
       <button onClick={handleAddIngredient}>Add Ingredient</button>
+      <h2>Description</h2>
+      <textarea
+        placeholder="Description"
+        value={description}
+        onChange={e => setDescription(e.target.value)}
+      />
+      <h2>Image</h2>
+      <input type="file" onChange={handleImageChange} />
       <button onClick={handleSubmit}>{id ? 'Update Recipe' : 'Save Recipe'}</button>
     </div>
   );

@@ -56,7 +56,8 @@ function RecipeList() {
         <thead>
           <tr>
             <th></th>
-            <th>Name</th>
+            <th></th>
+            <th></th>
             <th></th>
           </tr>
         </thead>
@@ -69,6 +70,9 @@ function RecipeList() {
                   onChange={() => handleSelectRecipe(recipe.id)}
                   checked={selectedRecipes.includes(recipe.id)}
                 />
+              </td>
+              <td>
+                {recipe.imageUrl && <img src={`/uploads/${recipe.imageUrl}`} alt={recipe.name} style={{ width: '50px', height: '50px' }} />}
               </td>
               <td>{recipe.name}</td>
               <td>
@@ -96,9 +100,9 @@ function RecipeList() {
             </thead>
             <tbody>
               {Object.entries(groceryList).map(([product, quantity]) => (
-                <tr key={product}>
-                  <td>{product}</td>
-                  <td>{quantity}</td>
+                <tr key={product.id}>
+                  <td>{product.name}</td>
+                  <td>{quantity} {product.unit}</td>
                 </tr>
               ))}
             </tbody>
