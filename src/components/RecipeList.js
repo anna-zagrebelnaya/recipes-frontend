@@ -6,7 +6,7 @@ import { FaPlus, FaPencilAlt, FaTrash } from 'react-icons/fa';
 function RecipeList() {
   const [recipes, setRecipes] = useState([]);
   const [selectedRecipes, setSelectedRecipes] = useState([]);
-  const [groceryList, setGroceryList] = useState({});
+  const [groceryList, setGroceryList] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,25 +42,19 @@ function RecipeList() {
   const handleGenerateGroceryList = () => {
     axios.post('/api/recipes/generate-grocery-list', selectedRecipes)
       .then(response => {
-        setGroceryList(response.data);
+        setGroceryList(response.data.items);
       });
   };
 
   return (
     <div>
       <h1>Recipe List</h1>
-      <button onClick={handleAddRecipe} style={{ display: 'flex', alignItems: 'center' }}>
-        <FaPlus />
-      </button>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-          </tr>
-        </thead>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <button onClick={handleAddRecipe} style={{ display: 'flex', alignItems: 'center' }}>
+          <FaPlus />
+        </button>
+      </div>
+      <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
         <tbody>
           {recipes.map(recipe => (
             <tr key={recipe.id} style={{ borderBottom: '1px solid #ccc' }}>
@@ -88,21 +82,15 @@ function RecipeList() {
         </tbody>
       </table>
       <button onClick={handleGenerateGroceryList}>Generate Grocery List</button>
-      {Object.keys(groceryList).length > 0 && (
+      {groceryList.length > 0 && (
         <div>
           <h2>Grocery List</h2>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr>
-                <th>Product</th>
-                <th>Quantity</th>
-              </tr>
-            </thead>
             <tbody>
-              {Object.entries(groceryList).map(([product, quantity]) => (
-                <tr key={product.id}>
-                  <td>{product.name}</td>
-                  <td>{quantity} {product.unit}</td>
+              {groceryList.map((item, index) => (
+                <tr key={index}>
+                  <td>{item.name}</td>
+                  <td>{item.quantity} {item.unit}</td>
                 </tr>
               ))}
             </tbody>
