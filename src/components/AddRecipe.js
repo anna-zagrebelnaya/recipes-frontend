@@ -58,17 +58,26 @@ function AddRecipe() {
   };
 
   const handleSubmit = () => {
-    const formData = new FormData();
-    formData.append('recipe', new Blob([JSON.stringify({
+    const recipeData = {
       name,
       ingredients: ingredients.map(ingredient => ({
         product: { name: ingredient.productName, unit: ingredient.unit },
         quantity: parseInt(ingredient.quantity, 10)
       })),
       description: `<ul>${descriptionHtml.map(item => `<li>${item}</li>`).join('')}</ul>`
-    })], {
+    };
+
+    // Include the existing image URL if no new file is selected
+    if (typeof image === 'string') {
+      recipeData.imageUrl = image;
+    }
+
+    const formData = new FormData();
+    formData.append('recipe', new Blob([JSON.stringify(recipeData)], {
       type: 'application/json'
     }));
+
+    // Include the image file if it's a new file
     if (image && image instanceof File) {
       formData.append('image', image);
     }
