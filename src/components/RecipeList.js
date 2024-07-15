@@ -65,23 +65,22 @@ function RecipeList() {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {recipes.map(recipe => (
-          <div key={recipe.id} className="border rounded-lg p-4 shadow hover:shadow-lg">
+          <div key={recipe.id} className="border rounded-lg p-4 shadow hover:shadow-lg flex">
             <input
               type="checkbox"
               onChange={(e) => handleSelectRecipe(e, recipe.id)}
               checked={selectedRecipes.includes(recipe.id)}
-              className="mb-2"
+              className="mr-2"
             />
             {recipe.imageUrl && (
               <img
                 src={`/uploads/${recipe.imageUrl}`}
                 alt={recipe.name}
-                className="w-full h-32 object-cover mb-2 cursor-pointer"
-                style={{ width: '100px', maxHeight: '100px' }}
+                className="w-24 h-24 object-cover cursor-pointer mr-4"
                 onClick={(e) => handleItemClick(e, recipe.id)}
               />
             )}
-            <div className="mt-2 flex justify-between items-center">
+            <div className="flex flex-col justify-center">
               <span className="font-bold cursor-pointer" onClick={(e) => handleItemClick(e, recipe.id)}>{recipe.name}</span>
             </div>
           </div>

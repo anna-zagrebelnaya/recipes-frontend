@@ -7,6 +7,7 @@ function AddRecipe() {
   const [ingredients, setIngredients] = useState([{ productName: '', unit: '', quantity: 0 }]);
   const [description, setDescription] = useState('');
   const [image, setImage] = useState(null);
+  const [descriptionHtml, setDescriptionHtml] = useState([]);
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -23,9 +24,16 @@ function AddRecipe() {
           })));
           setDescription(recipe.description);
           setImage(recipe.imageUrl);
+          setDescriptionHtml(parseHtmlToArray(recipe.description));
         });
     }
   }, [id]);
+
+  const parseHtmlToArray = (htmlString) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlString, 'text/html');
+    return Array.from(doc.querySelectorAll('ul > li')).map(li => li.innerHTML);
+  };
 
   const handleAddIngredient = () => {
     setIngredients([...ingredients, { productName: '', unit: '', quantity: 0 }]);
@@ -57,7 +65,7 @@ function AddRecipe() {
         product: { name: ingredient.productName, unit: ingredient.unit },
         quantity: parseInt(ingredient.quantity, 10)
       })),
-      description
+      description: `<ul>${descriptionHtml.map(item => `<li>${item}</li>`).join('')}</ul>`
     })], {
       type: 'application/json'
     }));
@@ -84,74 +92,89 @@ function AddRecipe() {
     }
   };
 
+  const handleDescriptionChange = (index, event) => {
+    const newDescriptionHtml = descriptionHtml.map((item, i) => {
+      if (i === index) {
+        return event.target.value;
+      }
+      return item;
+    });
+    setDescriptionHtml(newDescriptionHtml);
+  };
+
+  const handleAddDescriptionItem = () => {
+    setDescriptionHtml([...descriptionHtml, '']);
+  };
+
   return (
-    <div>
+    <div style={styles.container}>
       <h1>{id ? 'Edit Recipe' : 'Add Recipe'}</h1>
       <input
         type="text"
         placeholder="Recipe Name"
         value={name}
         onChange={e => setName(e.target.value)}
+        style={styles.input}
       />
       <h2>Ingredients</h2>
       {ingredients.map((ingredient, index) => (
-        <div key={index}>
+        <div key={index} style={styles.ingredientRow}>
           <input
             type="text"
             placeholder="Product Name"
             name="productName"
             value={ingredient.productName}
             onChange={e => handleChangeIngredient(index, e)}
+            style={styles.input}
           />
-          <select
-            name="unit"
-            value={ingredient.unit}
-            onChange={e => handleChangeIngredient(index, e)}
-          >
-            <option value="">Select Unit</option>
-            <option value="G">G</option>
-            <option value="ML">ML</option>
-            <option value="TBSP">TBSP</option>
-            <option value="TS">TS</option>
-            <option value="U">U</option>
-          </select>
           <input
             type="number"
             placeholder="Quantity"
             name="quantity"
             value={ingredient.quantity}
             onChange={e => handleChangeIngredient(index, e)}
+            style={{ width: '80px', margin: '0 10px', padding: '10px', borderRadius: '4px', border: '1px solid #ccc', boxSizing: 'border-box' }}
           />
+          <select
+            name="unit"
+            value={ingredient.unit}
+            onChange={e => handleChangeIngredient(index, e)}
+            style={{ width: '80px', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+          >
+            <option value="">Select Unit</option>
+            <option value="G">G</option>
+            <option value="ML">ML</option>
+            <option value="TBSP">TBSP</option>
+            <option value="TSP">TSP</option>
+            <option value="U">U</option>
+          </select>
         </div>
       ))}
-      <button onClick={handleAddIngredient}>Add Ingredient</button>
+      <button onClick={handleAddIngredient} style={styles.button}>Add Ingredient</button>
       <h2>Description</h2>
-      <textarea
-        placeholder="Description"
-        value={description}
-        onChange={e => setDescription(e.target.value)}
-      />
+      {descriptionHtml.map((item, index) => (
+        <input
+          key={index}
+          type="text"
+          value={item}
+          onChange={e => handleDescriptionChange(index, e)}
+          style={styles.input}
+        />
+      ))}
+      <button onClick={handleAddDescriptionItem} style={styles.button}>Add Description Item</button>
       <h2>Image</h2>
       <div
-        style={{
-          width: '200px',
-          height: '200px',
-          border: '2px solid #000',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          cursor: 'pointer'
-        }}
+        style={styles.imageContainer}
         onClick={handleImageClick}
       >
         {image ? (
           image instanceof File ? (
-            <img src={URL.createObjectURL(image)} alt="Recipe" style={{ maxWidth: '100%', maxHeight: '100%' }} />
+            <img src={URL.createObjectURL(image)} alt="Recipe" style={styles.image} />
           ) : (
-            <img src={"/uploads/"+image} alt="Recipe" style={{ maxWidth: '100%', maxHeight: '100%' }} />
+            <img src={"/uploads/"+image} alt="Recipe" style={styles.image} />
           )
         ) : (
-          <span>+</span>
+          <span style={styles.imagePlaceholder}>+</span>
         )}
       </div>
       <input
@@ -160,9 +183,69 @@ function AddRecipe() {
         style={{ display: 'none' }}
         onChange={handleImageChange}
       />
-      <button onClick={handleSubmit}>{id ? 'Update Recipe' : 'Save Recipe'}</button>
+      <button onClick={handleSubmit} style={styles.button}>{id ? 'Update Recipe' : 'Save Recipe'}</button>
     </div>
   );
 }
+
+const styles = {
+  container: {
+    maxWidth: '600px',
+    margin: '0 auto',
+    padding: '20px',
+    borderRadius: '8px',
+    boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+    backgroundColor: '#fff'
+  },
+  input: {
+    width: '100%',
+    padding: '10px',
+    marginBottom: '10px',
+    borderRadius: '4px',
+    border: '1px solid #ccc',
+    boxSizing: 'border-box'
+  },
+  textarea: {
+    width: '100%',
+    padding: '10px',
+    marginBottom: '10px',
+    borderRadius: '4px',
+    border: '1px solid #ccc',
+    boxSizing: 'border-box',
+    resize: 'vertical'
+  },
+  button: {
+    padding: '10px 20px',
+    backgroundColor: '#28a745',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer'
+  },
+  ingredientRow: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '10px'
+  },
+  imageContainer: {
+    width: '200px',
+    height: '200px',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    overflow: 'hidden'
+  },
+  image: {
+    maxWidth: '100%',
+    maxHeight: '100%'
+  },
+  imagePlaceholder: {
+    fontSize: '48px',
+    color: '#ccc'
+  }
+};
 
 export default AddRecipe;
