@@ -47,56 +47,71 @@ function RecipeList() {
   };
 
   return (
-    <div>
-      <h1>Recipe List</h1>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <button onClick={handleAddRecipe} style={{ display: 'flex', alignItems: 'center' }}>
+    <div className="p-4">
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-2xl font-bold">Всі рецепти</h1>
+        <button onClick={handleAddRecipe} className="p-2 bg-yellow-500 text-white rounded-full">
           <FaPlus />
         </button>
       </div>
-      <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
-        <tbody>
-          {recipes.map(recipe => (
-            <tr key={recipe.id} style={{ borderBottom: '1px solid #ccc' }}>
-              <td>
-                <input
-                  type="checkbox"
-                  onChange={() => handleSelectRecipe(recipe.id)}
-                  checked={selectedRecipes.includes(recipe.id)}
-                />
-              </td>
-              <td>
-                {recipe.imageUrl && <img src={`/uploads/${recipe.imageUrl}`} alt={recipe.name} style={{ width: '50px', height: '50px' }} />}
-              </td>
-              <td>{recipe.name}</td>
-              <td>
-                <button onClick={() => handleEditRecipe(recipe.id)} style={{ display: 'flex', alignItems: 'center' }}>
+      <div className="grid grid-cols-2 gap-4">
+        {recipes.map(recipe => (
+          <div key={recipe.id} className="border rounded-lg shadow-sm overflow-hidden relative">
+            <input
+              type="checkbox"
+              onChange={() => handleSelectRecipe(recipe.id)}
+              checked={selectedRecipes.includes(recipe.id)}
+              className="absolute mt-2 ml-2"
+            />
+            {recipe.imageUrl && (
+              <img
+                src={`/uploads/${recipe.imageUrl}`}
+                alt={recipe.name}
+                className="w-full h-40 object-cover"
+                style={{ maxWidth: '100px', maxHeight: '100px', display: 'block', margin: '0 auto' }}
+              />
+            )}
+            <div className="p-2 text-center">
+              <h2 className="text-lg font-semibold">{recipe.name}</h2>
+              <div className="flex justify-between mt-2">
+                <button
+                  onClick={() => handleEditRecipe(recipe.id)}
+                  className="text-blue-500"
+                >
                   <FaPencilAlt />
                 </button>
-                <button onClick={() => handleDeleteRecipe(recipe.id)} style={{ display: 'flex', alignItems: 'center' }}>
+                <button
+                  onClick={() => handleDeleteRecipe(recipe.id)}
+                  className="text-red-500"
+                >
                   <FaTrash />
                 </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <button onClick={handleGenerateGroceryList}>Generate Grocery List</button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
       {groceryList.length > 0 && (
-        <div>
-          <h2>Grocery List</h2>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div className="mt-4">
+          <h2 className="text-xl font-bold">Grocery List</h2>
+          <table className="w-full mt-2 border-collapse">
             <tbody>
               {groceryList.map((item, index) => (
-                <tr key={index}>
-                  <td>{item.name}</td>
-                  <td>{item.quantity} {item.unit}</td>
+                <tr key={index} className="border-t">
+                  <td className="p-2">{item.name}</td>
+                  <td className="p-2">{item.quantity} {item.unit}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       )}
+      <button
+        onClick={handleGenerateGroceryList}
+        className="mt-4 p-2 bg-yellow-500 text-white rounded"
+      >
+        Generate Grocery List
+      </button>
     </div>
   );
 }
