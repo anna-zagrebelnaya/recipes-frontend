@@ -45,6 +45,10 @@ function AddRecipe() {
     setImage(e.target.files[0]);
   };
 
+  const handleImageClick = () => {
+    document.getElementById('fileInput').click();
+  };
+
   const handleSubmit = () => {
     const formData = new FormData();
     formData.append('recipe', new Blob([JSON.stringify({
@@ -57,7 +61,7 @@ function AddRecipe() {
     })], {
       type: 'application/json'
     }));
-    if (image) {
+    if (image && image instanceof File) {
       formData.append('image', image);
     }
 
@@ -128,7 +132,34 @@ function AddRecipe() {
         onChange={e => setDescription(e.target.value)}
       />
       <h2>Image</h2>
-      <input type="file" onChange={handleImageChange} />
+      <div
+        style={{
+          width: '200px',
+          height: '200px',
+          border: '2px solid #000',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          cursor: 'pointer'
+        }}
+        onClick={handleImageClick}
+      >
+        {image ? (
+          image instanceof File ? (
+            <img src={URL.createObjectURL(image)} alt="Recipe" style={{ maxWidth: '100%', maxHeight: '100%' }} />
+          ) : (
+            <img src={"/uploads/"+image} alt="Recipe" style={{ maxWidth: '100%', maxHeight: '100%' }} />
+          )
+        ) : (
+          <span>+</span>
+        )}
+      </div>
+      <input
+        type="file"
+        id="fileInput"
+        style={{ display: 'none' }}
+        onChange={handleImageChange}
+      />
       <button onClick={handleSubmit}>{id ? 'Update Recipe' : 'Save Recipe'}</button>
     </div>
   );
