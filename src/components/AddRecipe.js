@@ -11,6 +11,14 @@ function AddRecipe() {
   const navigate = useNavigate();
   const { id } = useParams();
 
+  const unitMapping = {
+    G: 'г',
+    ML: 'мл',
+    TBSP: 'ст.л.',
+    TSP: 'ч.л.',
+    U: 'шт'
+  };
+
   useEffect(() => {
     if (id) {
       axios.get(`/api/recipes/${id}`)
@@ -125,53 +133,6 @@ function AddRecipe() {
         onChange={e => setName(e.target.value)}
         style={styles.input}
       />
-      <h2>Ingredients</h2>
-      {ingredients.map((ingredient, index) => (
-        <div key={index} style={styles.ingredientRow}>
-          <input
-            type="text"
-            placeholder="Product Name"
-            name="productName"
-            value={ingredient.productName}
-            onChange={e => handleChangeIngredient(index, e)}
-            style={styles.input}
-          />
-          <input
-            type="number"
-            placeholder="Quantity"
-            name="quantity"
-            value={ingredient.quantity}
-            onChange={e => handleChangeIngredient(index, e)}
-            style={{ width: '80px', margin: '0 10px', padding: '10px', borderRadius: '4px', border: '1px solid #ccc', boxSizing: 'border-box' }}
-          />
-          <select
-            name="unit"
-            value={ingredient.unit}
-            onChange={e => handleChangeIngredient(index, e)}
-            style={{ width: '80px', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
-          >
-            <option value="">Select Unit</option>
-            <option value="G">G</option>
-            <option value="ML">ML</option>
-            <option value="TBSP">TBSP</option>
-            <option value="TSP">TSP</option>
-            <option value="U">U</option>
-          </select>
-        </div>
-      ))}
-      <button onClick={handleAddIngredient} style={styles.button}>Add Ingredient</button>
-      <h2>Description</h2>
-      {descriptionHtml.map((item, index) => (
-        <input
-          key={index}
-          type="text"
-          value={item}
-          onChange={e => handleDescriptionChange(index, e)}
-          style={styles.input}
-        />
-      ))}
-      <button onClick={handleAddDescriptionItem} style={styles.button}>Add Description Item</button>
-      <h2>Image</h2>
       <div
         style={styles.imageContainer}
         onClick={handleImageClick}
@@ -192,6 +153,54 @@ function AddRecipe() {
         style={{ display: 'none' }}
         onChange={handleImageChange}
       />
+      <div style={styles.section}>
+        <h2>Ingredients</h2>
+        {ingredients.map((ingredient, index) => (
+          <div key={index} style={styles.ingredientRow}>
+            <input
+              type="text"
+              placeholder="Product Name"
+              name="productName"
+              value={ingredient.productName}
+              onChange={e => handleChangeIngredient(index, e)}
+              style={styles.input}
+            />
+            <input
+              type="number"
+              placeholder="Quantity"
+              name="quantity"
+              value={ingredient.quantity}
+              onChange={e => handleChangeIngredient(index, e)}
+              style={{ width: '80px', margin: '0 10px', padding: '10px', borderRadius: '4px', border: '1px solid #ccc', boxSizing: 'border-box' }}
+            />
+            <select
+              name="unit"
+              value={ingredient.unit}
+              onChange={e => handleChangeIngredient(index, e)}
+              style={{ width: '80px', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+            >
+              <option value="">Select Unit</option>
+              {Object.keys(unitMapping).map(unit => (
+                <option key={unit} value={unit}>{unitMapping[unit]}</option>
+              ))}
+            </select>
+          </div>
+        ))}
+        <button onClick={handleAddIngredient} style={styles.button}>Add Ingredient</button>
+      </div>
+      <div style={styles.section}>
+        <h2>Description</h2>
+        {descriptionHtml.map((item, index) => (
+          <input
+            key={index}
+            type="text"
+            value={item}
+            onChange={e => handleDescriptionChange(index, e)}
+            style={styles.input}
+          />
+        ))}
+        <button onClick={handleAddDescriptionItem} style={styles.button}>Add Description Item</button>
+      </div>
       <button onClick={handleSubmit} style={styles.button}>{id ? 'Update Recipe' : 'Save Recipe'}</button>
     </div>
   );
@@ -214,46 +223,52 @@ const styles = {
     border: '1px solid #ccc',
     boxSizing: 'border-box'
   },
+  ingredientRow: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '10px'
+  },
   textarea: {
     width: '100%',
     padding: '10px',
     marginBottom: '10px',
     borderRadius: '4px',
     border: '1px solid #ccc',
-    boxSizing: 'border-box',
-    resize: 'vertical'
-  },
-  button: {
-    padding: '10px 20px',
-    backgroundColor: '#28a745',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer'
-  },
-  ingredientRow: {
-    display: 'flex',
-    alignItems: 'center',
-    marginBottom: '10px'
+    boxSizing: 'border-box'
   },
   imageContainer: {
-    width: '200px',
+    width: '100%',
     height: '200px',
     border: '1px solid #ccc',
     borderRadius: '4px',
     display: 'flex',
-    alignItems: 'center',
     justifyContent: 'center',
-    cursor: 'pointer',
-    overflow: 'hidden'
+    alignItems: 'center',
+    cursor: 'pointer'
   },
   image: {
     maxWidth: '100%',
-    maxHeight: '100%'
+    maxHeight: '100%',
+    objectFit: 'cover',
+    borderRadius: '4px'
   },
   imagePlaceholder: {
-    fontSize: '48px',
+    fontSize: '2rem',
     color: '#ccc'
+  },
+  section: {
+    marginBottom: '20px',
+  },
+  button: {
+    display: 'block',
+    width: '100%',
+    padding: '10px',
+    borderRadius: '4px',
+    border: 'none',
+    backgroundColor: '#007BFF',
+    color: '#fff',
+    fontSize: '16px',
+    cursor: 'pointer'
   }
 };
 
