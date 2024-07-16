@@ -54,13 +54,13 @@ function RecipeList() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Recipe List</h1>
+      <h1 className="text-2xl font-bold mb-4">Список рецептів</h1>
       <div className="flex items-center justify-between mb-4">
         <button onClick={handleAddRecipe} className="bg-green-500 text-white px-4 py-2 rounded-full flex items-center">
-          <FaPlus className="mr-2" /> Add Recipe
+          <FaPlus className="mr-2" /> Додати
         </button>
         <button onClick={handleDeleteRecipes} className="bg-red-500 text-white px-4 py-2 rounded-full flex items-center">
-          <FaTrash className="mr-2" /> Delete Selected
+          <FaTrash className="mr-2" /> Видалити
         </button>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -86,15 +86,15 @@ function RecipeList() {
           </div>
         ))}
       </div>
-      <button onClick={handleGenerateGroceryList} className="bg-blue-500 text-white px-4 py-2 rounded-full mt-4">Generate Grocery List</button>
+      <button onClick={handleGenerateGroceryList} className="bg-blue-500 text-white px-4 py-2 rounded-full mt-4">Створити список закупок</button>
       {groceryList.length > 0 && (
         <div className="mt-4">
-          <h2 className="text-xl font-bold mb-2">Grocery List</h2>
+          <h2 className="text-xl font-bold mb-2">Список закупок</h2>
           <table className="min-w-full bg-white">
             <thead>
               <tr>
-                <th className="py-2">Item</th>
-                <th className="py-2">Quantity</th>
+                <th className="py-2">Продукт</th>
+                <th className="py-2">Кількість</th>
               </tr>
             </thead>
             <tbody>

@@ -75,7 +75,6 @@ function AddRecipe() {
       description: `<ul>${descriptionHtml.map(item => `<li>${item}</li>`).join('')}</ul>`
     };
 
-    // Include the existing image URL if no new file is selected
     if (typeof image === 'string') {
       recipeData.imageUrl = image;
     }
@@ -85,7 +84,6 @@ function AddRecipe() {
       type: 'application/json'
     }));
 
-    // Include the image file if it's a new file
     if (image && image instanceof File) {
       formData.append('image', image);
     }
@@ -123,12 +121,17 @@ function AddRecipe() {
     setDescriptionHtml([...descriptionHtml, '']);
   };
 
+  const handleDeleteDescriptionItem = (index) => {
+    const newDescriptionHtml = descriptionHtml.filter((_, i) => i !== index);
+    setDescriptionHtml(newDescriptionHtml);
+  };
+
   return (
     <div style={styles.container}>
-      <h1>{id ? 'Edit Recipe' : 'Add Recipe'}</h1>
+      <h1>{id ? 'Редагування рецепту' : 'Новий рецепт'}</h1>
       <input
         type="text"
-        placeholder="Recipe Name"
+        placeholder="Назва Рецепту"
         value={name}
         onChange={e => setName(e.target.value)}
         style={styles.input}
@@ -141,7 +144,7 @@ function AddRecipe() {
           image instanceof File ? (
             <img src={URL.createObjectURL(image)} alt="Recipe" style={styles.image} />
           ) : (
-            <img src={"/uploads/"+image} alt="Recipe" style={styles.image} />
+            <img src={"/uploads/" + image} alt="Recipe" style={styles.image} />
           )
         ) : (
           <span style={styles.imagePlaceholder}>+</span>
@@ -153,13 +156,13 @@ function AddRecipe() {
         style={{ display: 'none' }}
         onChange={handleImageChange}
       />
-      <div style={styles.section}>
-        <h2>Ingredients</h2>
+      <div style={{...styles.section, border: '1px solid grey', padding: '10px'}}>
+        <h2>Інгредієнти</h2>
         {ingredients.map((ingredient, index) => (
           <div key={index} style={styles.ingredientRow}>
             <input
               type="text"
-              placeholder="Product Name"
+              placeholder="Назва продукту"
               name="productName"
               value={ingredient.productName}
               onChange={e => handleChangeIngredient(index, e)}
@@ -167,7 +170,7 @@ function AddRecipe() {
             />
             <input
               type="number"
-              placeholder="Quantity"
+              placeholder="Кількість"
               name="quantity"
               value={ingredient.quantity}
               onChange={e => handleChangeIngredient(index, e)}
@@ -186,86 +189,98 @@ function AddRecipe() {
             </select>
           </div>
         ))}
-        <button onClick={handleAddIngredient} style={styles.button}>Add Ingredient</button>
+        <button onClick={handleAddIngredient} style={styles.button}>Додати інгредієнт</button>
       </div>
-      <div style={styles.section}>
-        <h2>Description</h2>
+      <div style={{...styles.section, border: '1px solid grey', padding: '10px', marginTop: '20px'}}>
+        <h2>Спосіб приготування</h2>
         {descriptionHtml.map((item, index) => (
-          <input
-            key={index}
-            type="text"
-            value={item}
-            onChange={e => handleDescriptionChange(index, e)}
-            style={styles.input}
-          />
+          <div key={index} style={styles.descriptionRow}>
+            <input
+              type="text"
+              value={item}
+              onChange={e => handleDescriptionChange(index, e)}
+              style={styles.input}
+            />
+            <button onClick={() => handleDeleteDescriptionItem(index)} style={styles.deleteButton}>✖</button>
+          </div>
         ))}
-        <button onClick={handleAddDescriptionItem} style={styles.button}>Add Description Item</button>
+        <button onClick={handleAddDescriptionItem} style={styles.button}>Додати крок</button>
       </div>
-      <button onClick={handleSubmit} style={styles.button}>{id ? 'Update Recipe' : 'Save Recipe'}</button>
+      <button onClick={handleSubmit} style={styles.submitButton}>{id ? 'Оновити' : 'Створити'}</button>
     </div>
   );
 }
 
 const styles = {
   container: {
-    maxWidth: '600px',
-    margin: '0 auto',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
     padding: '20px',
-    borderRadius: '8px',
-    boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-    backgroundColor: '#fff'
+    maxWidth: '600px',
+    margin: '0 auto'
   },
   input: {
     width: '100%',
     padding: '10px',
-    marginBottom: '10px',
-    borderRadius: '4px',
-    border: '1px solid #ccc',
-    boxSizing: 'border-box'
-  },
-  ingredientRow: {
-    display: 'flex',
-    alignItems: 'center',
-    marginBottom: '10px'
-  },
-  textarea: {
-    width: '100%',
-    padding: '10px',
-    marginBottom: '10px',
+    margin: '10px 0',
     borderRadius: '4px',
     border: '1px solid #ccc',
     boxSizing: 'border-box'
   },
   imageContainer: {
     width: '100%',
-    height: '200px',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    margin: '10px 0',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    overflow: 'hidden',
     cursor: 'pointer'
   },
   image: {
-    maxWidth: '100%',
-    maxHeight: '100%',
-    objectFit: 'cover',
-    borderRadius: '4px'
+    width: '100%',
+    height: 'auto'
   },
   imagePlaceholder: {
-    fontSize: '2rem',
+    fontSize: '3em',
     color: '#ccc'
   },
   section: {
-    marginBottom: '20px',
+    width: '100%',
+    margin: '20px 0'
+  },
+  ingredientRow: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '10px'
+  },
+  descriptionRow: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '10px'
   },
   button: {
-    display: 'block',
-    width: '100%',
-    padding: '10px',
-    borderRadius: '4px',
+    padding: '10px 20px',
+    backgroundColor: '#007bff',
+    color: '#fff',
     border: 'none',
-    backgroundColor: '#007BFF',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    marginTop: '10px'
+  },
+  deleteButton: {
+    color: 'red',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    marginLeft: '10px',
+    padding: '10px'
+  },
+  submitButton: {
+    padding: '10px 20px',
+    backgroundColor: 'green',
     color: '#fff',
     fontSize: '16px',
     cursor: 'pointer'
