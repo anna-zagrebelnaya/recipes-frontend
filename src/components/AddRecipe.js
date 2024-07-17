@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import 'tailwindcss/tailwind.css';
 
 function AddRecipe() {
   const [name, setName] = useState('');
@@ -127,27 +128,27 @@ function AddRecipe() {
   };
 
   return (
-    <div style={styles.container}>
-      <h1>{id ? 'Редагування рецепту' : 'Новий рецепт'}</h1>
+    <div className="max-w-lg mx-auto p-5 border border-gray-300 rounded-lg">
+      <h1 className="text-2xl font-bold mb-4">{id ? 'Редагування рецепту' : 'Новий рецепт'}</h1>
       <input
         type="text"
         placeholder="Назва Рецепту"
         value={name}
         onChange={e => setName(e.target.value)}
-        style={styles.input}
+        className="w-full p-2 mb-4 border border-gray-300 rounded"
       />
       <div
-        style={styles.imageContainer}
+        className="w-full h-48 border-2 border-dashed border-gray-300 flex justify-center items-center mb-4 cursor-pointer"
         onClick={handleImageClick}
       >
         {image ? (
           image instanceof File ? (
-            <img src={URL.createObjectURL(image)} alt="Recipe" style={styles.image} />
+            <img src={URL.createObjectURL(image)} alt="Recipe" className="max-w-full max-h-full" />
           ) : (
-            <img src={"/uploads/" + image} alt="Recipe" style={styles.image} />
+            <img src={"/uploads/" + image} alt="Recipe" className="max-w-full max-h-full" />
           )
         ) : (
-          <span style={styles.imagePlaceholder}>+</span>
+          <span className="text-4xl text-gray-300">+</span>
         )}
       </div>
       <input
@@ -156,31 +157,31 @@ function AddRecipe() {
         style={{ display: 'none' }}
         onChange={handleImageChange}
       />
-      <div style={{...styles.section, border: '1px solid grey', padding: '10px'}}>
-        <h2>Інгредієнти</h2>
+      <div className="mb-4">
+        <h2 className="text-xl font-semibold mb-2">Інгредієнти</h2>
         {ingredients.map((ingredient, index) => (
-          <div key={index} style={styles.ingredientRow}>
+          <div key={index} className="flex items-center mb-2">
             <input
               type="text"
-              placeholder="Назва продукту"
               name="productName"
               value={ingredient.productName}
               onChange={e => handleChangeIngredient(index, e)}
-              style={styles.input}
+              placeholder="Назва продукту"
+              className="w-full p-2 mr-2 border border-gray-300 rounded"
             />
             <input
               type="number"
-              placeholder="Кількість"
               name="quantity"
               value={ingredient.quantity}
               onChange={e => handleChangeIngredient(index, e)}
-              style={{ width: '80px', margin: '0 10px', padding: '10px', borderRadius: '4px', border: '1px solid #ccc', boxSizing: 'border-box' }}
+              placeholder="Кількість"
+              className="w-1/4 p-2 mr-2 border border-gray-300 rounded"
             />
             <select
               name="unit"
               value={ingredient.unit}
               onChange={e => handleChangeIngredient(index, e)}
-              style={{ width: '80px', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+              className="p-2 border border-gray-300 rounded"
             >
               <option value="">Select Unit</option>
               {Object.keys(unitMapping).map(unit => (
@@ -189,102 +190,45 @@ function AddRecipe() {
             </select>
           </div>
         ))}
-        <button onClick={handleAddIngredient} style={styles.button}>Додати інгредієнт</button>
+        <button
+          onClick={handleAddIngredient}
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+        >
+          Додати інгредієнт
+        </button>
       </div>
-      <div style={{...styles.section, border: '1px solid grey', padding: '10px', marginTop: '20px'}}>
-        <h2>Спосіб приготування</h2>
+      <div className="mb-4">
+        <h2 className="text-xl font-semibold mb-2">Спосіб приготування</h2>
         {descriptionHtml.map((item, index) => (
-          <div key={index} style={styles.descriptionRow}>
+          <div key={index} className="flex items-center mb-2">
             <input
               type="text"
               value={item}
               onChange={e => handleDescriptionChange(index, e)}
-              style={styles.input}
+              className="w-full p-2 mr-2 border border-gray-300 rounded"
             />
-            <button onClick={() => handleDeleteDescriptionItem(index)} style={styles.deleteButton}>✖</button>
+            <button
+             onClick={() => handleDeleteDescriptionItem(index)}
+             className="ml-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-700"
+             >
+              ✖
+             </button>
           </div>
         ))}
-        <button onClick={handleAddDescriptionItem} style={styles.button}>Додати крок</button>
+        <button onClick={handleAddDescriptionItem}
+        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+        >
+         Додати крок
+        </button>
       </div>
-      <button onClick={handleSubmit} style={styles.submitButton}>{id ? 'Оновити' : 'Створити'}</button>
+      <button
+        onClick={handleSubmit}
+        className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700"
+        >
+         {id ? 'Оновити' : 'Створити'}
+        </button>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: '20px',
-    maxWidth: '600px',
-    margin: '0 auto'
-  },
-  input: {
-    width: '100%',
-    padding: '10px',
-    margin: '10px 0',
-    borderRadius: '4px',
-    border: '1px solid #ccc',
-    boxSizing: 'border-box'
-  },
-  imageContainer: {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: '10px 0',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    overflow: 'hidden',
-    cursor: 'pointer'
-  },
-  image: {
-    width: '100%',
-    height: 'auto'
-  },
-  imagePlaceholder: {
-    fontSize: '3em',
-    color: '#ccc'
-  },
-  section: {
-    width: '100%',
-    margin: '20px 0'
-  },
-  ingredientRow: {
-    display: 'flex',
-    alignItems: 'center',
-    marginBottom: '10px'
-  },
-  descriptionRow: {
-    display: 'flex',
-    alignItems: 'center',
-    marginBottom: '10px'
-  },
-  button: {
-    padding: '10px 20px',
-    backgroundColor: '#007bff',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    marginTop: '10px'
-  },
-  deleteButton: {
-    color: 'red',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    marginLeft: '10px',
-    padding: '10px'
-  },
-  submitButton: {
-    padding: '10px 20px',
-    backgroundColor: 'green',
-    color: '#fff',
-    fontSize: '16px',
-    cursor: 'pointer'
-  }
-};
 
 export default AddRecipe;
