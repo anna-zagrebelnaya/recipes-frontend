@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import 'tailwindcss/tailwind.css';
+import categoryMapping from './categoryMapping';
 
 function AddRecipe() {
   const [name, setName] = useState('');
+  const [category, setCategory] = useState('BREAKFAST');
   const [ingredients, setIngredients] = useState([{ productName: '', unit: '', quantity: 0 }]);
   const [description, setDescription] = useState('');
   const [image, setImage] = useState(null);
@@ -26,6 +28,7 @@ function AddRecipe() {
         .then(response => {
           const recipe = response.data;
           setName(recipe.name);
+          setCategory(recipe.category);
           setIngredients(recipe.ingredients.map(ingredient => ({
             productName: ingredient.product.name,
             unit: ingredient.product.unit,
@@ -69,6 +72,7 @@ function AddRecipe() {
   const handleSubmit = () => {
     const recipeData = {
       name,
+      category,
       ingredients: ingredients.map(ingredient => ({
         product: { name: ingredient.productName, unit: ingredient.unit },
         quantity: parseInt(ingredient.quantity, 10)
@@ -137,6 +141,16 @@ function AddRecipe() {
         onChange={e => setName(e.target.value)}
         className="w-full p-2 mb-4 border border-gray-300 rounded"
       />
+      <select
+          id="category"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        >
+          {Object.keys(categoryMapping).map(key => (
+            <option key={key} value={key}>{categoryMapping[key]}</option>
+          ))}
+      </select>
       <div
         className="w-full h-48 border-2 border-dashed border-gray-300 flex justify-center items-center mb-4 cursor-pointer"
         onClick={handleImageClick}

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaPlus, FaTrash } from 'react-icons/fa';
 import 'tailwindcss/tailwind.css';
+import categoryMapping from './categoryMapping';
 
 function RecipeList() {
   const [recipes, setRecipes] = useState([]);
@@ -82,6 +83,7 @@ function RecipeList() {
             )}
             <div className="flex flex-col justify-center">
               <span className="font-bold cursor-pointer" onClick={(e) => handleItemClick(e, recipe.id)}>{recipe.name}</span>
+              <span className="text-sm text-gray-500">{categoryMapping[recipe.category]}</span>
             </div>
           </div>
         ))}
