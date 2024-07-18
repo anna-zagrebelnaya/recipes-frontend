@@ -3,7 +3,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import 'tailwindcss/tailwind.css';
 import categoryMapping from './categoryMapping';
+import unitMapping from './unitMapping';
 import RecipeModal from './RecipeModal';
+import { FaEye } from 'react-icons/fa';
+import DescriptionBlock from './DescriptionBlock';
 
 function AddRecipe() {
   const [name, setName] = useState('');
@@ -16,14 +19,6 @@ function AddRecipe() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
-
-  const unitMapping = {
-    G: 'г',
-    ML: 'мл',
-    TBSP: 'ст.л.',
-    TSP: 'ч.л.',
-    U: 'шт'
-  };
 
   useEffect(() => {
     if (id) {
@@ -148,12 +143,10 @@ function AddRecipe() {
     <div className="max-w-lg mx-auto p-5 border border-gray-300 rounded-lg">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold mb-4">{id ? 'Редагування рецепту' : 'Новий рецепт'}</h1>
-        <button
+        <FaEye
           onClick={handleOpenModal}
-          className="bg-purple-500 text-white px-4 py-2 rounded mb-4"
-        >
-          Переглянути
-        </button>
+          className="text-purple-500 text-2xl cursor-pointer mb-4"
+        />
       </div>
       <input
         type="text"
@@ -244,30 +237,12 @@ function AddRecipe() {
           Додати Інгредієнт
         </button>
       </div>
-      <div className="mb-4">
-        <h2 className="text-xl font-semibold mb-2">Спосіб приготування</h2>
-        {descriptionHtml.map((item, index) => (
-          <div key={index} className="flex items-center mb-2">
-            <input
-              type="text"
-              value={item}
-              onChange={e => handleDescriptionChange(index, e)}
-              className="w-full p-2 mr-2 border border-gray-300 rounded"
-            />
-            <button
-             onClick={() => handleDeleteDescriptionItem(index)}
-             className="ml-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-700"
-             >
-              ✖
-             </button>
-          </div>
-        ))}
-        <button onClick={handleAddDescriptionItem}
-        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
-        >
-         Додати крок
-        </button>
-      </div>
+      <DescriptionBlock
+          descriptionHtml={descriptionHtml}
+          handleDescriptionChange={handleDescriptionChange}
+          handleDeleteDescriptionItem={handleDeleteDescriptionItem}
+          handleAddDescriptionItem={handleAddDescriptionItem}
+        />
       <button
         onClick={handleSubmit}
         className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700"
@@ -284,8 +259,6 @@ function AddRecipe() {
           ingredients={ingredients}
           descriptionHtml={descriptionHtml}
           image={image}
-          unitMapping={unitMapping}
-          categoryMapping={categoryMapping}
         />
     </div>
   );

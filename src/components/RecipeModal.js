@@ -1,8 +1,10 @@
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import categoryMapping from './categoryMapping';
+import unitMapping from './unitMapping';
 
-function RecipeModal({ isModalOpen, handleCloseModal, name, category, calories, ingredients, descriptionHtml, image, unitMapping, categoryMapping }) {
+function RecipeModal({ isModalOpen, handleCloseModal, name, category, calories, ingredients, descriptionHtml, image }) {
   return (
     <Modal show={isModalOpen} onHide={handleCloseModal}>
       <Modal.Header closeButton>
@@ -10,22 +12,26 @@ function RecipeModal({ isModalOpen, handleCloseModal, name, category, calories, 
       </Modal.Header>
       <Modal.Body>
         <h3 className="text-xl font-bold mb-2">{name}</h3>
-        <div className="flex items-center">
-            <p className="mb-2 mr-2">{categoryMapping[category]}</p>
+        <div className="d-flex mb-4">
+          {image && (
+            <img
+              src={image instanceof File ? URL.createObjectURL(image) : `/uploads/${image}`}
+              alt="Recipe"
+              className="me-3" // Bootstrap class for right margin
+              style={{ maxWidth: '150px', height: 'auto' }} // Adjust the size of the image
+            />
+          )}
+          <div>
+            <p className="mb-2">{categoryMapping[category]}</p>
             <p className="mb-2">{calories} ккал</p>
+          </div>
         </div>
-        {image && (
-          <img
-            src={image instanceof File ? URL.createObjectURL(image) : `/uploads/${image}`}
-            alt="Recipe"
-            className="mb-4 max-w-full h-auto"
-          />
-        )}
         <h4 className="text-xl font-bold mb-2">Інгредієнти:</h4>
         <ul className="list-disc pl-5 mb-4">
           {ingredients.map((ingredient, index) => (
-            <li key={index}>
-              {ingredient.productName} - {ingredient.quantity === 0 ? 'за смаком' : `${ingredient.quantity} ${unitMapping[ingredient.unit]}`}
+            <li key={index} className="d-flex justify-content-between">
+              <span>{ingredient.productName}</span>
+              <span>{ingredient.quantity === 0 ? 'за смаком' : ingredient.quantity} {ingredient.quantity === 0 ? '' : unitMapping[ingredient.unit]}</span>
             </li>
           ))}
         </ul>
