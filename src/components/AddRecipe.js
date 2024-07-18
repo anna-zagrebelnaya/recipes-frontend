@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Modal, Button } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import 'tailwindcss/tailwind.css';
 import categoryMapping from './categoryMapping';
+import RecipeModal from './RecipeModal';
 
 function AddRecipe() {
   const [name, setName] = useState('');
@@ -149,12 +148,12 @@ function AddRecipe() {
     <div className="max-w-lg mx-auto p-5 border border-gray-300 rounded-lg">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold mb-4">{id ? 'Редагування рецепту' : 'Новий рецепт'}</h1>
-        <Button
+        <button
           onClick={handleOpenModal}
           className="bg-purple-500 text-white px-4 py-2 rounded mb-4"
         >
           Переглянути
-        </Button>
+        </button>
       </div>
       <input
         type="text"
@@ -276,45 +275,18 @@ function AddRecipe() {
          {id ? 'Оновити' : 'Створити'}
         </button>
 
-      <Modal show={isModalOpen} onHide={handleCloseModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Перегляд рецепту</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <h3 className="text-xl font-bold mb-2">{name}</h3>
-          <div className="flex items-center">
-              <p className="mb-2 mr-2">{categoryMapping[category]}</p>
-              <p className="mb-2">{calories} ккал</p>
-          </div>
-          {image && (
-            <img
-              src={image instanceof File ? URL.createObjectURL(image) : `/uploads/${image}`}
-              alt="Recipe"
-              className="mb-4 max-w-full h-auto"
-            />
-          )}
-          <h4 className="text-xl font-bold mb-2">Інгредієнти:</h4>
-          <ul className="list-disc pl-5 mb-4">
-            {ingredients.map((ingredient, index) => (
-              <li key={index}>
-                {ingredient.productName} - {ingredient.quantity === 0 ? 'за смаком' : `${ingredient.quantity} ${unitMapping[ingredient.unit]}`}
-              </li>
-            ))}
-          </ul>
-          <h4 className="text-xl font-bold mb-2">Спосіб приготування:</h4>
-          <ul className="list-decimal pl-5">
-            {descriptionHtml.map((item, index) => (
-              <li key={index} dangerouslySetInnerHTML={{ __html: item }} />
-            ))}
-          </ul>
-
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
-            Закрити
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <RecipeModal
+          isModalOpen={isModalOpen}
+          handleCloseModal={handleCloseModal}
+          name={name}
+          category={category}
+          calories={calories}
+          ingredients={ingredients}
+          descriptionHtml={descriptionHtml}
+          image={image}
+          unitMapping={unitMapping}
+          categoryMapping={categoryMapping}
+        />
     </div>
   );
 }
