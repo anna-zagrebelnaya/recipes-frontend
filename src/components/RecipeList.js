@@ -64,9 +64,9 @@ function RecipeList() {
           <FaTrash className="mr-2" /> Видалити
         </button>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {recipes.map(recipe => (
-          <div key={recipe.id} className="border rounded-lg p-4 shadow hover:shadow-lg flex">
+          <div key={recipe.id} className="border rounded-lg p-4 shadow hover:shadow-lg flex min-w-60">
             <input
               type="checkbox"
               onChange={(e) => handleSelectRecipe(e, recipe.id)}
