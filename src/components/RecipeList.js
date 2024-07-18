@@ -77,7 +77,7 @@ function RecipeList() {
               <img
                 src={`/uploads/${recipe.imageUrl}`}
                 alt={recipe.name}
-                className="w-24 h-24 object-cover cursor-pointer mr-4"
+                className="w-24 h-24 object-cover cursor-pointer mr-4 rounded-lg"
                 onClick={(e) => handleItemClick(e, recipe.id)}
               />
             )}

@@ -139,6 +139,15 @@ function AddRecipe() {
     setIsModalOpen(false);
   };
 
+  const recipe = {
+    name,
+    category,
+    calories,
+    ingredients,
+    descriptionHtml,
+    image
+  };
+
   return (
     <div className="max-w-lg mx-auto p-5 border border-gray-300 rounded-lg">
       <div className="flex justify-between items-center">
@@ -238,27 +247,22 @@ function AddRecipe() {
         </button>
       </div>
       <DescriptionBlock
-          descriptionHtml={descriptionHtml}
-          handleDescriptionChange={handleDescriptionChange}
-          handleDeleteDescriptionItem={handleDeleteDescriptionItem}
-          handleAddDescriptionItem={handleAddDescriptionItem}
-        />
+        descriptionHtml={descriptionHtml}
+        handleDescriptionChange={handleDescriptionChange}
+        handleDeleteDescriptionItem={handleDeleteDescriptionItem}
+        handleAddDescriptionItem={handleAddDescriptionItem}
+      />
       <button
         onClick={handleSubmit}
         className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700"
-        >
-         {id ? 'Оновити' : 'Створити'}
-        </button>
+      >
+        {id ? 'Оновити' : 'Створити'}
+      </button>
 
       <RecipeModal
           isModalOpen={isModalOpen}
           handleCloseModal={handleCloseModal}
-          name={name}
-          category={category}
-          calories={calories}
-          ingredients={ingredients}
-          descriptionHtml={descriptionHtml}
-          image={image}
+          recipe={recipe}
         />
     </div>
   );
