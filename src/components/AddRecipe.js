@@ -7,6 +7,7 @@ import unitMapping from './unitMapping';
 import RecipeModal from './RecipeModal';
 import { FaEye } from 'react-icons/fa';
 import DescriptionBlock from './DescriptionBlock';
+import IngredientDropdown from './IngredientDropdown';
 
 function AddRecipe() {
   const [name, setName] = useState('');
@@ -17,6 +18,7 @@ function AddRecipe() {
   const [image, setImage] = useState(null);
   const [descriptionHtml, setDescriptionHtml] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [products, setProducts] = useState([]);
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -38,6 +40,15 @@ function AddRecipe() {
           setDescriptionHtml(parseHtmlToArray(recipe.description));
         });
     }
+
+    // Fetch products once
+    axios.get('/api/products')
+      .then(response => {
+        setProducts(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching products:', error);
+      });
   }, [id]);
 
   const parseHtmlToArray = (htmlString) => {
@@ -51,13 +62,15 @@ function AddRecipe() {
   };
 
   const handleChangeIngredient = (index, event) => {
-    const newIngredients = ingredients.map((ingredient, i) => {
-      if (i === index) {
-        return { ...ingredient, [event.target.name]: event.target.value };
-      }
-      return ingredient;
+    const { name, value } = event.target;
+    setIngredients((prevIngredients) => {
+      const newIngredients = [...prevIngredients];
+      newIngredients[index] = {
+        ...newIngredients[index],
+        [name]: value
+      };
+      return newIngredients;
     });
-    setIngredients(newIngredients);
   };
 
   const handleImageChange = (e) => {
@@ -209,13 +222,11 @@ function AddRecipe() {
         <h2 className="text-xl font-semibold mb-2">Інгредієнти</h2>
         {ingredients.map((ingredient, index) => (
           <div key={index} className="flex items-center mb-2">
-            <input
-              type="text"
-              name="productName"
-              value={ingredient.productName}
-              onChange={e => handleChangeIngredient(index, e)}
-              placeholder="Назва продукту"
-              className="w-full p-2 mr-2 border border-gray-300 rounded"
+            <IngredientDropdown
+              index={index}
+              ingredient={ingredient}
+              handleChangeIngredient={handleChangeIngredient}
+              products={products}
             />
             <input
               type="number"
