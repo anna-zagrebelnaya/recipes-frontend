@@ -112,7 +112,7 @@ function AddRecipe() {
       })
         .then(response => {
           console.log(response.data);
-          navigate('/');
+          navigate('/recipes');
         });
     } else {
       axios.post('/api/recipes', formData, {

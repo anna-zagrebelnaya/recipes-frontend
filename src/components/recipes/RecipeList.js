@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaPlus, FaTrash } from 'react-icons/fa';
 import 'tailwindcss/tailwind.css';
-import categoryMapping from './categoryMapping';
+import RecipeCard from './RecipeCard';
 
 function RecipeList() {
   const [recipes, setRecipes] = useState([]);
@@ -19,7 +19,7 @@ function RecipeList() {
   }, []);
 
   const handleAddRecipe = () => {
-    navigate('/add');
+    navigate('/recipes/add');
   };
 
   const handleDeleteRecipes = () => {
@@ -50,7 +50,7 @@ function RecipeList() {
 
   const handleItemClick = (e, id) => {
     e.stopPropagation();
-    navigate(`/edit/${id}`);
+    navigate(`/recipes/edit/${id}`);
   };
 
   return (
@@ -66,27 +66,13 @@ function RecipeList() {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {recipes.map(recipe => (
-          <div key={recipe.id} className="border rounded-lg p-3 shadow hover:shadow-lg flex min-w-60">
-            <input
-              type="checkbox"
-              onChange={(e) => handleSelectRecipe(e, recipe.id)}
-              checked={selectedRecipes.includes(recipe.id)}
-              className="mr-2"
-            />
-            {recipe.imageUrl && (
-              <img
-                src={`/uploads/${recipe.imageUrl}`}
-                alt={recipe.name}
-                className="w-24 h-24 object-cover cursor-pointer mr-4 rounded-lg"
-                onClick={(e) => handleItemClick(e, recipe.id)}
-              />
-            )}
-            <div className="flex flex-col justify-center">
-              <span className="font-bold cursor-pointer" onClick={(e) => handleItemClick(e, recipe.id)}>{recipe.name}</span>
-              <span className="text-sm text-gray-500">{categoryMapping[recipe.category]}</span>
-              <span className="text-sm text-gray-500">{recipe.calories} ккал</span>
-            </div>
-          </div>
+          <RecipeCard
+            key={recipe.id}
+            recipe={recipe}
+            handleSelectRecipe={handleSelectRecipe}
+            selectedRecipes={selectedRecipes}
+            handleItemClick={handleItemClick}
+          />
         ))}
       </div>
       <button onClick={handleGenerateGroceryList} className="bg-blue-500 text-white px-4 py-2 rounded-full mt-4">Створити список закупок</button>
