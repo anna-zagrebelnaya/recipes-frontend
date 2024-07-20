@@ -48,9 +48,9 @@ function RecipeList() {
       });
   };
 
-  const handleItemClick = (e, id) => {
+  const handleItemClick = (e, recipe) => {
     e.stopPropagation();
-    navigate(`/recipes/edit/${id}`);
+    navigate(`/recipes/edit/${recipe.id}`);
   };
 
   return (

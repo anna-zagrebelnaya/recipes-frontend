@@ -156,9 +156,15 @@ function AddRecipe() {
     name,
     category,
     calories,
-    ingredients,
-    descriptionHtml,
-    image
+    ingredients: ingredients.map(ingredient => ({
+                             product: {
+                                name: ingredient.productName,
+                                unit: ingredient.unit
+                             },
+                             quantity: ingredient.quantity
+                           })),
+    description: `<ul>${descriptionHtml.map(item => `<li>${item}</li>`).join('')}</ul>`,
+    imageUrl: image instanceof File ? URL.createObjectURL(image) : `/uploads/${image}`
   };
 
   return (

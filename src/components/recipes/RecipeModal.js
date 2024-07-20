@@ -5,7 +5,15 @@ import categoryMapping from './categoryMapping';
 import unitMapping from './unitMapping';
 
 function RecipeModal({ isModalOpen, handleCloseModal, recipe }) {
-  const { name, category, calories, ingredients, descriptionHtml, image } = recipe;
+  const { name, category, calories, ingredients, description, imageUrl } = recipe;
+
+  const parseHtmlToArray = (htmlString) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlString, 'text/html');
+    return Array.from(doc.querySelectorAll('ul > li')).map(li => li.innerHTML);
+  };
+
+  const descriptionHtml = parseHtmlToArray(recipe.description);
 
   return (
     <Modal show={isModalOpen} onHide={handleCloseModal}>
@@ -14,9 +22,9 @@ function RecipeModal({ isModalOpen, handleCloseModal, recipe }) {
       </Modal.Header>
       <Modal.Body>
         <div className="d-flex mb-4">
-          {image && (
+          {imageUrl && (
             <img
-              src={image instanceof File ? URL.createObjectURL(image) : `/uploads/${image}`}
+              src={imageUrl}
               alt="Recipe"
               className="me-3 rounded-lg" // Bootstrap class for right margin
               style={{ maxWidth: '150px', height: 'auto' }} // Adjust the size of the image
@@ -32,8 +40,8 @@ function RecipeModal({ isModalOpen, handleCloseModal, recipe }) {
         <ul className="list-disc pl-5 mb-4">
           {ingredients.map((ingredient, index) => (
             <li key={index} className="d-flex justify-content-between">
-              <span>{ingredient.productName}</span>
-              <span>{ingredient.quantity === 0 ? 'за смаком' : ingredient.quantity} {ingredient.quantity === 0 ? '' : unitMapping[ingredient.unit]}</span>
+              <span>{ingredient.product.name}</span>
+              <span>{ingredient.quantity === 0 ? 'за смаком' : ingredient.quantity} {ingredient.quantity === 0 ? '' : unitMapping[ingredient.product.unit]}</span>
             </li>
           ))}
         </ul>
