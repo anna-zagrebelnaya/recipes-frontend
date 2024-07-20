@@ -99,6 +99,16 @@ function MenuCalendar() {
     handleCloseRecipeListModal();
   };
 
+  const calculateTotalCalories = () => {
+    if (!menu) return 0;
+    let totalCalories = 0;
+    if (menu.breakfast) totalCalories += menu.breakfast.calories;
+    if (menu.snack) totalCalories += menu.snack.calories;
+    if (menu.lunch) totalCalories += menu.lunch.calories;
+    if (menu.dinner) totalCalories += menu.dinner.calories;
+    return totalCalories;
+  };
+
   return (
     <div className="flex flex-wrap">
       <div className="w-1/3 p-4 min-w-72">
@@ -108,7 +118,7 @@ function MenuCalendar() {
         />
       </div>
       <div className="w-2/3 p-4">
-        <h2 className="text-2xl mb-4">Меню</h2>
+        <h2 className="text-2xl mb-4">Меню - {calculateTotalCalories()} ккал</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             {menu && menu.breakfast ? (
