@@ -29,6 +29,9 @@ function IngredientDropdown({ index, ingredient, handleChangeIngredient, product
     handleChangeIngredient(index, {
       target: { name: 'unit', value: product.unit }
     });
+    handleChangeIngredient(index, {
+      target: { name: 'category', value: product.category }
+    });
     setSuggestions([]);
     setIsFocused(false);
   };

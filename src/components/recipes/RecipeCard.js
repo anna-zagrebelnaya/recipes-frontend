@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'tailwindcss/tailwind.css';
-import categoryMapping from './categoryMapping';
+import recipeCategoryMapping from './recipeCategoryMapping';
 
 function RecipeCard({ recipe, handleSelectRecipe, selectedRecipes, handleItemClick }) {
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ function RecipeCard({ recipe, handleSelectRecipe, selectedRecipes, handleItemCli
       )}
       <div className="flex flex-col justify-center">
         <span className="font-bold cursor-pointer" onClick={(e) => handleItemClick(e, recipe)}>{recipe.name}</span>
-        <span className="text-sm text-gray-500">{categoryMapping[recipe.category]}</span>
+        <span className="text-sm text-gray-500">{recipeCategoryMapping[recipe.category]}</span>
         <span className="text-sm text-gray-500">{recipe.calories} ккал</span>
       </div>
     </div>

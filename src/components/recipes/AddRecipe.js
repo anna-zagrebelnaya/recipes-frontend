@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import 'tailwindcss/tailwind.css';
-import categoryMapping from './categoryMapping';
+import recipeCategoryMapping from './recipeCategoryMapping';
+import productCategoryMapping from './productCategoryMapping';
 import unitMapping from './unitMapping';
 import RecipeModal from './RecipeModal';
 import { FaEye } from 'react-icons/fa';
@@ -33,6 +34,7 @@ function AddRecipe() {
           setIngredients(recipe.ingredients.map(ingredient => ({
             productName: ingredient.product.name,
             unit: ingredient.product.unit,
+            category: ingredient.product.category,
             quantity: ingredient.quantity
           })));
           setDescription(recipe.description);
@@ -58,7 +60,7 @@ function AddRecipe() {
   };
 
   const handleAddIngredient = () => {
-    setIngredients([...ingredients, { productName: '', unit: '', quantity: 0 }]);
+    setIngredients([...ingredients, { productName: '', unit: '', category: '', quantity: 0 }]);
   };
 
   const handleChangeIngredient = (index, event) => {
@@ -87,7 +89,7 @@ function AddRecipe() {
       category,
       calories: parseInt(calories, 10),
       ingredients: ingredients.map(ingredient => ({
-        product: { name: ingredient.productName, unit: ingredient.unit },
+        product: { name: ingredient.productName, unit: ingredient.unit, category: ingredient.category },
         quantity: parseInt(ingredient.quantity, 10)
       })),
       description: `<ul>${descriptionHtml.map(item => `<li>${item}</li>`).join('')}</ul>`
@@ -159,7 +161,8 @@ function AddRecipe() {
     ingredients: ingredients.map(ingredient => ({
                              product: {
                                 name: ingredient.productName,
-                                unit: ingredient.unit
+                                unit: ingredient.unit,
+                                category: ingredient.category
                              },
                              quantity: ingredient.quantity
                            })),
@@ -190,8 +193,8 @@ function AddRecipe() {
           onChange={(e) => setCategory(e.target.value)}
           className="shadow border rounded w-full py-2 px-3 mb-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
         >
-          {Object.keys(categoryMapping).map(key => (
-            <option key={key} value={key}>{categoryMapping[key]}</option>
+          {Object.keys(recipeCategoryMapping).map(key => (
+            <option key={key} value={key}>{recipeCategoryMapping[key]}</option>
           ))}
         </select>
         <input
@@ -251,6 +254,17 @@ function AddRecipe() {
               <option value="">Одиниця</option>
               {Object.keys(unitMapping).map(unit => (
                 <option key={unit} value={unit}>{unitMapping[unit]}</option>
+              ))}
+            </select>
+            <select
+              name="category"
+              value={ingredient.category}
+              onChange={e => handleChangeIngredient(index, e)}
+              className="p-2 border border-gray-300 rounded"
+            >
+              <option value="">Категорія</option>
+              {Object.keys(productCategoryMapping).map(unit => (
+                <option key={unit} value={unit}>{productCategoryMapping[unit]}</option>
               ))}
             </select>
           </div>
