@@ -5,12 +5,15 @@ import axios from 'axios';
 import 'tailwindcss/tailwind.css';
 import RecipeCard from './../recipes/RecipeCard';
 import RecipeModal from './../recipes/RecipeModal';
+import RecipeListModal from './RecipeListModal';
 
 function MenuCalendar() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [menu, setMenu] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isRecipeListModalOpen, setIsRecipeListModalOpen] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [currentMeal, setCurrentMeal] = useState(null);
 
   const fetchMenu = (date) => {
     const correctedDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
@@ -45,6 +48,57 @@ function MenuCalendar() {
     setSelectedRecipe(null);
   };
 
+  const handleOpenRecipeListModal = (meal) => {
+    setCurrentMeal(meal);
+    setIsRecipeListModalOpen(true);
+  };
+
+  const handleCloseRecipeListModal = () => {
+    setIsRecipeListModalOpen(false);
+    setCurrentMeal(null);
+  };
+
+  const handleSelectRecipe = (recipe) => {
+    const newMenu = { ...menu };
+
+    if (currentMeal) {
+      newMenu[currentMeal] = recipe;
+    }
+
+    setMenu(newMenu);
+
+    const correctedDate = new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000));
+    const formattedDate = correctedDate.toISOString().split('T')[0];
+
+    const menuData = {
+      date: formattedDate,
+      breakfastId: newMenu.breakfast ? newMenu.breakfast.id : null,
+      snackId: newMenu.snack ? newMenu.snack.id : null,
+      lunchId: newMenu.lunch ? newMenu.lunch.id : null,
+      dinnerId: newMenu.dinner ? newMenu.dinner.id : null,
+    };
+
+    if (menu && menu.id) {
+      axios.put(`/api/menus/${menu.id}`, menuData)
+        .then(response => {
+          setMenu(response.data);
+        })
+        .catch(error => {
+          console.error('Error updating menu:', error);
+        });
+    } else {
+      axios.post('/api/menus', menuData)
+        .then(response => {
+          setMenu(response.data);
+        })
+        .catch(error => {
+          console.error('Error creating menu:', error);
+        });
+    }
+
+    handleCloseRecipeListModal();
+  };
+
   return (
     <div className="flex flex-wrap">
       <div className="w-1/3 p-4 min-w-72">
@@ -60,7 +114,10 @@ function MenuCalendar() {
             {menu && menu.breakfast ? (
               <RecipeCard recipe={menu.breakfast} handleItemClick={handleRecipeClick} />
             ) : (
-              <div className="flex items-center justify-center border border-gray-300 rounded-lg min-w-60 min-h-32 text-2xl text-gray-300">
+              <div
+                className="flex items-center justify-center border border-gray-300 rounded-lg min-w-60 min-h-32 text-2xl text-gray-300"
+                onClick={() => handleOpenRecipeListModal('breakfast')}
+               >
                 Сніданок
               </div>
             )}
@@ -69,7 +126,10 @@ function MenuCalendar() {
             {menu && menu.snack ? (
               <RecipeCard recipe={menu.snack} handleItemClick={handleRecipeClick} />
             ) : (
-              <div className="flex items-center justify-center border border-gray-300 rounded-lg min-w-60 min-h-32 text-2xl text-gray-300">
+              <div
+                className="flex items-center justify-center border border-gray-300 rounded-lg min-w-60 min-h-32 text-2xl text-gray-300"
+                onClick={() => handleOpenRecipeListModal('snack')}
+               >
                 Перекус
               </div>
             )}
@@ -78,7 +138,10 @@ function MenuCalendar() {
             {menu && menu.lunch ? (
               <RecipeCard recipe={menu.lunch} handleItemClick={handleRecipeClick} />
             ) : (
-              <div className="flex items-center justify-center border border-gray-300 rounded-lg min-w-60 min-h-32 text-2xl text-gray-300">
+              <div
+                className="flex items-center justify-center border border-gray-300 rounded-lg min-w-60 min-h-32 text-2xl text-gray-300"
+                onClick={() => handleOpenRecipeListModal('lunch')}
+               >
                 Обід
               </div>
             )}
@@ -87,7 +150,10 @@ function MenuCalendar() {
             {menu && menu.dinner ? (
               <RecipeCard recipe={menu.dinner} handleItemClick={handleRecipeClick} />
             ) : (
-              <div className="flex items-center justify-center border border-gray-300 rounded-lg min-w-60 min-h-32 text-2xl text-gray-300">
+              <div
+                className="flex items-center justify-center border border-gray-300 rounded-lg min-w-60 min-h-32 text-2xl text-gray-300"
+                onClick={() => handleOpenRecipeListModal('dinner')}
+               >
                 Вечеря
               </div>
             )}
@@ -101,6 +167,11 @@ function MenuCalendar() {
           recipe={selectedRecipe}
         />
       )}
+      <RecipeListModal
+        isModalOpen={isRecipeListModalOpen}
+        handleCloseModal={handleCloseRecipeListModal}
+        handleSelectRecipe={handleSelectRecipe}
+      />
     </div>
   );
 }
