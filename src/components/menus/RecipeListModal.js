@@ -3,6 +3,7 @@ import { Modal, Button } from 'react-bootstrap';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import RecipeCard from './../recipes/RecipeCard';
+import './../styles/customModal.css';
 
 function RecipeListModal({ isModalOpen, handleCloseModal, handleSelectRecipe }) {
   const [recipes, setRecipes] = useState([]);
@@ -18,12 +19,12 @@ function RecipeListModal({ isModalOpen, handleCloseModal, handleSelectRecipe }) 
   }, []);
 
   return (
-    <Modal show={isModalOpen} onHide={handleCloseModal}>
+    <Modal show={isModalOpen} onHide={handleCloseModal} dialogClassName="custom-modal-dialog">
       <Modal.Header closeButton>
         <Modal.Title>Виберіть рецепт</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {recipes.map(recipe => (
             <RecipeCard key={recipe.id} recipe={recipe} handleItemClick={() => handleSelectRecipe(recipe)} />
           ))}

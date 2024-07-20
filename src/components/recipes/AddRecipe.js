@@ -120,7 +120,7 @@ function AddRecipe() {
       })
         .then(response => {
           console.log(response.data);
-          navigate('/');
+          navigate('/recipes');
         });
     }
   };
