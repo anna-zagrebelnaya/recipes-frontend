@@ -16,6 +16,16 @@ const DescriptionBlock = ({ descriptionHtml, handleDescriptionChange, handleDele
     });
   }, [descriptionHtml]);
 
+  useEffect(() => {
+    // Focus on the last textarea if it exists
+    if (textAreaRefs.current.length > 0) {
+      const lastTextarea = textAreaRefs.current[textAreaRefs.current.length - 1];
+      if (lastTextarea) {
+        lastTextarea.focus();
+      }
+    }
+  }, [descriptionHtml]);
+
   return (
     <div className="mb-4">
       <h2 className="text-xl font-semibold mb-2">Спосіб приготування</h2>
@@ -39,7 +49,15 @@ const DescriptionBlock = ({ descriptionHtml, handleDescriptionChange, handleDele
         </div>
       ))}
       <button
-        onClick={handleAddDescriptionItem}
+        onClick={() => {
+          handleAddDescriptionItem();
+          setTimeout(() => {
+            const lastTextarea = textAreaRefs.current[textAreaRefs.current.length - 1];
+            if (lastTextarea) {
+              lastTextarea.focus();
+            }
+          }, 0);
+        }}
         className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
       >
         Додати крок

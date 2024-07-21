@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-function IngredientDropdown({ index, ingredient, handleChangeIngredient, products }) {
+function IngredientDropdown({ index, ingredient, handleChangeIngredient, products, inputRef }) {
   const [suggestions, setSuggestions] = useState([]);
   const [isFocused, setIsFocused] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
-  const inputRef = useRef(null);
+  const localInputRef = useRef(null);
 
   const filterIngredientSuggestions = (input) => {
     const filteredSuggestions = products.filter((product) =>
@@ -50,7 +50,7 @@ function IngredientDropdown({ index, ingredient, handleChangeIngredient, product
   const handleBlur = (e) => {
     // Delay to allow click event to fire before suggestions are hidden
     setTimeout(() => {
-      if (!inputRef.current.contains(e.relatedTarget)) {
+      if (!localInputRef.current.contains(e.relatedTarget)) {
         setIsFocused(false);
       }
     }, 100);
@@ -74,7 +74,7 @@ function IngredientDropdown({ index, ingredient, handleChangeIngredient, product
   };
 
   return (
-    <div className="relative" ref={inputRef}>
+    <div className="relative" ref={localInputRef}>
       <input
         type="text"
         name="productName"
@@ -83,9 +83,10 @@ function IngredientDropdown({ index, ingredient, handleChangeIngredient, product
         onFocus={handleFocus}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
-        className="w-full p-2 border border-gray-300 rounded"
+        className="p-2 mr-2 border border-gray-300 rounded"
         placeholder="Інгредієнт"
         autoComplete="off" // Disable browser autocomplete
+        ref={inputRef}
       />
       {isFocused && suggestions.length > 0 && (
         <ul className="absolute bg-white border border-gray-300 w-full mt-1 max-h-40 overflow-y-auto z-10">

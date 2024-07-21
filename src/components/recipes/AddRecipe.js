@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import 'tailwindcss/tailwind.css';
@@ -22,6 +22,7 @@ function AddRecipe() {
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
   const { id } = useParams();
+  const lastProductInputRef = useRef(null);
 
   useEffect(() => {
     if (id) {
@@ -61,6 +62,11 @@ function AddRecipe() {
 
   const handleAddIngredient = () => {
     setIngredients([...ingredients, { productName: '', unit: '', category: '', quantity: 0 }]);
+    setTimeout(() => {
+      if (lastProductInputRef.current) {
+        lastProductInputRef.current.focus();
+      }
+    }, 0);
   };
 
   const handleChangeIngredient = (index, event) => {
@@ -236,6 +242,7 @@ function AddRecipe() {
               ingredient={ingredient}
               handleChangeIngredient={handleChangeIngredient}
               products={products}
+              inputRef={index === ingredients.length - 1 ? lastProductInputRef : null}
             />
             <input
               type="number"
@@ -243,15 +250,15 @@ function AddRecipe() {
               value={ingredient.quantity}
               onChange={e => handleChangeIngredient(index, e)}
               placeholder="Кількість"
-              className="w-1/4 p-2 mr-2 border border-gray-300 rounded"
+              className="p-2 mr-2 border border-gray-300 rounded max-w-16"
             />
             <select
               name="unit"
               value={ingredient.unit}
               onChange={e => handleChangeIngredient(index, e)}
-              className="p-2 border border-gray-300 rounded"
+              className="p-2 mr-2 border border-gray-300 rounded max-w-16"
             >
-              <option value="">Одиниця</option>
+              <option value="">Од.</option>
               {Object.keys(unitMapping).map(unit => (
                 <option key={unit} value={unit}>{unitMapping[unit]}</option>
               ))}
@@ -260,9 +267,9 @@ function AddRecipe() {
               name="category"
               value={ingredient.category}
               onChange={e => handleChangeIngredient(index, e)}
-              className="p-2 border border-gray-300 rounded"
+              className="p-2 border border-gray-300 rounded max-w-20"
             >
-              <option value="">Категорія</option>
+              <option value="">Кат.</option>
               {Object.keys(productCategoryMapping).map(unit => (
                 <option key={unit} value={unit}>{productCategoryMapping[unit]}</option>
               ))}
@@ -291,10 +298,10 @@ function AddRecipe() {
       </button>
 
       <RecipeModal
-          isModalOpen={isModalOpen}
-          handleCloseModal={handleCloseModal}
-          recipe={recipe}
-        />
+        isModalOpen={isModalOpen}
+        handleCloseModal={handleCloseModal}
+        recipe={recipe}
+      />
     </div>
   );
 }
