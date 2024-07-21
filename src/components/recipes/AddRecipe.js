@@ -81,6 +81,10 @@ function AddRecipe() {
     });
   };
 
+  const handleDeleteIngredient = (index) => {
+    setIngredients((prevIngredients) => prevIngredients.filter((_, i) => i !== index));
+  };
+
   const handleImageChange = (e) => {
     setImage(e.target.files[0]);
   };
@@ -274,6 +278,11 @@ function AddRecipe() {
                 <option key={unit} value={unit}>{productCategoryMapping[unit]}</option>
               ))}
             </select>
+            <button
+              onClick={() => handleDeleteIngredient(index)}
+            >
+              ✖
+            </button>
           </div>
         ))}
         <button
