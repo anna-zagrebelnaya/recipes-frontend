@@ -34,7 +34,7 @@ function AddRecipe() {
           setCalories(recipe.calories);
           setIngredients(recipe.ingredients.map(ingredient => ({
             productName: ingredient.product.name,
-            unit: ingredient.product.unit,
+            unit: ingredient.unit,
             category: ingredient.product.category,
             quantity: ingredient.quantity
           })));
@@ -100,7 +100,8 @@ function AddRecipe() {
       calories: parseInt(calories, 10),
       ingredients: ingredients.map(ingredient => ({
         product: { name: ingredient.productName, unit: ingredient.unit, category: ingredient.category },
-        quantity: parseInt(ingredient.quantity, 10)
+        quantity: parseInt(ingredient.quantity, 10),
+        unit: ingredient.unit
       })),
       description: `<ul>${descriptionHtml.map(item => `<li>${item}</li>`).join('')}</ul>`
     };
@@ -174,7 +175,8 @@ function AddRecipe() {
                                 unit: ingredient.unit,
                                 category: ingredient.category
                              },
-                             quantity: ingredient.quantity
+                             quantity: ingredient.quantity,
+                             unit: ingredient.unit
                            })),
     description: `<ul>${descriptionHtml.map(item => `<li>${item}</li>`).join('')}</ul>`,
     imageUrl: image instanceof File ? URL.createObjectURL(image) : `/uploads/${image}`
