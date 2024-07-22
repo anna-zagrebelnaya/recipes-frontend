@@ -126,7 +126,7 @@ function MenuCalendar() {
             ) : (
               <div
                 className="flex items-center justify-center border border-gray-300 rounded-lg min-w-60 min-h-32 text-2xl text-gray-300"
-                onClick={() => handleOpenRecipeListModal('breakfast')}
+                onClick={() => handleOpenRecipeListModal('BREAKFAST')}
                >
                 Сніданок
               </div>
@@ -138,7 +138,7 @@ function MenuCalendar() {
             ) : (
               <div
                 className="flex items-center justify-center border border-gray-300 rounded-lg min-w-60 min-h-32 text-2xl text-gray-300"
-                onClick={() => handleOpenRecipeListModal('snack')}
+                onClick={() => handleOpenRecipeListModal('SNACK')}
                >
                 Перекус
               </div>
@@ -150,7 +150,7 @@ function MenuCalendar() {
             ) : (
               <div
                 className="flex items-center justify-center border border-gray-300 rounded-lg min-w-60 min-h-32 text-2xl text-gray-300"
-                onClick={() => handleOpenRecipeListModal('lunch')}
+                onClick={() => handleOpenRecipeListModal('LUNCH')}
                >
                 Обід
               </div>
@@ -162,7 +162,7 @@ function MenuCalendar() {
             ) : (
               <div
                 className="flex items-center justify-center border border-gray-300 rounded-lg min-w-60 min-h-32 text-2xl text-gray-300"
-                onClick={() => handleOpenRecipeListModal('dinner')}
+                onClick={() => handleOpenRecipeListModal('DINNER')}
                >
                 Вечеря
               </div>
@@ -179,6 +179,7 @@ function MenuCalendar() {
       )}
       <RecipeListModal
         isModalOpen={isRecipeListModalOpen}
+        currentCategory={currentMeal}
         handleCloseModal={handleCloseRecipeListModal}
         handleSelectRecipe={handleSelectRecipe}
       />
