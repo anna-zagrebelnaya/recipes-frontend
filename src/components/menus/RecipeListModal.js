@@ -12,15 +12,17 @@ function RecipeListModal({ isModalOpen, currentCategory, handleCloseModal, handl
   const [recipes, setRecipes] = useState([]);
   const [showFilter, setShowFilter] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedCalories, setSelectedCalories] = useState('ALL');
 
   useEffect(() => {
     handleFilterChange([currentCategory]);
   }, [currentCategory]);
 
-  const handleFilterChange = (filters) => {
-    setSelectedCategories(filters);
+  const handleFilterChange = (categories, calories) => {
+    setSelectedCategories(categories);
+    setSelectedCalories(calories);
     axios.get('/api/recipes', {
-      params: { categories: filters },
+      params: { categories: categories, calories: calories },
       paramsSerializer: params => qs.stringify(params, { arrayFormat: 'repeat' })
     })
       .then(response => {
@@ -40,7 +42,7 @@ function RecipeListModal({ isModalOpen, currentCategory, handleCloseModal, handl
         </button>
         <div className="py-2">
             {showFilter && (
-              <RecipeFilter onFilterChange={handleFilterChange} selectedCategories={selectedCategories} />
+              <RecipeFilter onFilterChange={handleFilterChange} selectedCategories={selectedCategories} selectedCalories={selectedCalories} />
             )}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
