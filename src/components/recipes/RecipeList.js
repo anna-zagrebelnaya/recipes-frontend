@@ -19,23 +19,39 @@ function RecipeList() {
   const [hasMore, setHasMore] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const loadRecipes = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get('/api/recipes', {
-          params: { page, categories: selectedCategories, calories: selectedCalories },
-          paramsSerializer: params => qs.stringify(params, { arrayFormat: 'repeat' })
-        });
-        setRecipes(prevRecipes => [...prevRecipes, ...response.data]);
-        setHasMore(response.data.length > 0);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadRecipes();
+  const loadRecipes = useCallback(async (reset = false) => {
+    setLoading(true);
+    try {
+      const response = await axios.get('/api/recipes', {
+        params: { page, categories: selectedCategories, calories: selectedCalories },
+        paramsSerializer: params => qs.stringify(params, { arrayFormat: 'repeat' })
+      });
+      setRecipes(prevRecipes => reset ? response.data : [...prevRecipes, ...response.data]);
+      setHasMore(response.data.length > 0);
+    } finally {
+      setLoading(false);
+    }
   }, [page, selectedCategories, selectedCalories]);
+
+  // Load recipes on initial load
+  useEffect(() => {
+    loadRecipes(true);  // Initial load with reset
+  }, []);
+
+  // Load more recipes when page changes
+  useEffect(() => {
+    if (page > 0) {
+      loadRecipes();  // Load more when page changes
+    }
+  }, [page]);
+
+  // Load recipes when filters change
+  useEffect(() => {
+    if (selectedCategories.length > 0 || selectedCalories.length > 0) {
+      setPage(0);  // Reset page to 0
+      loadRecipes(true);  // Load recipes with reset
+    }
+  }, [selectedCategories, selectedCalories]);
 
   const handleAddRecipe = () => {
     navigate('/recipes/add');
@@ -73,7 +89,6 @@ function RecipeList() {
   };
 
   const handleFilterChange = (categories, calories) => {
-    setRecipes([]);
     setSelectedCategories(categories);
     setSelectedCalories(calories);
     setPage(0);
