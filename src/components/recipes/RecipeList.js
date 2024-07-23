@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaPlus, FaTrash, FaFilter } from 'react-icons/fa';
@@ -14,14 +14,28 @@ function RecipeList() {
   const [showFilter, setShowFilter] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedCalories, setSelectedCalories] = useState([]);
+  const [page, setPage] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('/api/recipes')
-      .then(response => {
-        setRecipes(response.data);
-      });
-  }, []);
+    const loadRecipes = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get('/api/recipes', {
+          params: { page, categories: selectedCategories, calories: selectedCalories },
+          paramsSerializer: params => qs.stringify(params, { arrayFormat: 'repeat' })
+        });
+        setRecipes(prevRecipes => [...prevRecipes, ...response.data]);
+        setHasMore(response.data.length > 0);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadRecipes();
+  }, [page, selectedCategories, selectedCalories]);
 
   const handleAddRecipe = () => {
     navigate('/recipes/add');
@@ -59,17 +73,29 @@ function RecipeList() {
   };
 
   const handleFilterChange = (categories, calories) => {
+    setRecipes([]);
     setSelectedCategories(categories);
     setSelectedCalories(calories);
-    axios.get('/api/recipes', {
-      params: { categories: categories, calories: calories },
-      paramsSerializer: params => qs.stringify(params, { arrayFormat: 'repeat' })
-    })
-      .then(response => {
-        setRecipes(response.data);
-      });
+    setPage(0);
     setShowFilter(false);
   };
+
+  const loadMoreRecipes = useCallback(() => {
+    if (!loading && hasMore) {
+      setPage(prevPage => prevPage + 1);
+    }
+  }, [loading, hasMore]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.scrollHeight - 50) {
+        loadMoreRecipes();
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [loadMoreRecipes]);
 
   return (
     <div className="container mx-auto p-4">
@@ -101,6 +127,7 @@ function RecipeList() {
           />
         ))}
       </div>
+      {loading && <p>Завантаження...</p>}
       <button onClick={handleGenerateGroceryList} className="bg-blue-500 text-white px-4 py-2 rounded-full mt-4">Створити список закупок</button>
       {groceryList.length > 0 && (
         <div className="mt-4">
