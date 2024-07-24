@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { FaEye, FaTimes } from 'react-icons/fa';
 import 'tailwindcss/tailwind.css';
-import { FaEye } from 'react-icons/fa';
 import recipeCategoryMapping from './recipeCategoryMapping';
 import RecipeModal from './RecipeModal';
 
-function RecipeCard({ recipe, handleSelectRecipe, selectedRecipes, handleItemClick }) {
-  const navigate = useNavigate();
+function RecipeCard({ recipe, handleSelectRecipe, selectedRecipes, handleItemClick, showRemoveBtn, handleRemoveRecipe }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [detailedRecipe, setDetailedRecipe] = useState(recipe);
 
@@ -60,6 +58,12 @@ function RecipeCard({ recipe, handleSelectRecipe, selectedRecipes, handleItemCli
         onClick={handleOpenModal}
         className="text-purple-500 text-2xl cursor-pointer absolute top-2 right-2"
       />
+      {showRemoveBtn && (
+        <FaTimes
+          onClick={() => handleRemoveRecipe(recipe)}
+          className="text-red-500 text-2xl cursor-pointer absolute bottom-2 right-2"
+        />
+      )}
       <RecipeModal
         isModalOpen={isModalOpen}
         handleCloseModal={handleCloseModal}

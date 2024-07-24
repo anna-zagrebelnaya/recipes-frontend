@@ -91,6 +91,33 @@ function MenuCalendar() {
     handleCloseRecipeListModal();
   };
 
+  const handleRemoveRecipe = (currentMeal) => {
+    if (!currentMeal) return;
+
+    const newMenu = { ...menu };
+    newMenu[currentMeal] = null;
+    setMenu(newMenu);
+
+    const correctedDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
+    const formattedDate = correctedDate.toISOString().split('T')[0];
+
+    const menuData = {
+      date: formattedDate,
+      breakfastId: newMenu.breakfast ? newMenu.breakfast.id : null,
+      snackId: newMenu.snack ? newMenu.snack.id : null,
+      lunchId: newMenu.lunch ? newMenu.lunch.id : null,
+      dinnerId: newMenu.dinner ? newMenu.dinner.id : null,
+    };
+
+    axios.put(`/api/menus/${menu.id}`, menuData)
+      .then((response) => {
+        setMenu(response.data);
+      })
+      .catch((error) => {
+        console.error('Error updating menu:', error);
+      });
+  };
+
   const calculateTotalCalories = () => {
     if (!menu) return 0;
     let totalCalories = 0;
@@ -114,7 +141,12 @@ function MenuCalendar() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             {menu && menu.breakfast ? (
-              <RecipeCard recipe={menu.breakfast} handleItemClick={(e) => handleRecipeClick(e, menu.breakfast, 'breakfast')} />
+              <RecipeCard
+                recipe={menu.breakfast}
+                showRemoveBtn={true}
+                handleRemoveRecipe={(e) => handleRemoveRecipe('breakfast')}
+                handleItemClick={(e) => handleRecipeClick(e, menu.breakfast, 'breakfast')}
+              />
             ) : (
               <div
                 className="flex items-center justify-center border border-gray-300 rounded-lg min-w-60 min-h-32 text-2xl text-gray-300"
@@ -126,7 +158,12 @@ function MenuCalendar() {
           </div>
           <div>
             {menu && menu.snack ? (
-              <RecipeCard recipe={menu.snack} handleItemClick={(e) => handleRecipeClick(e, menu.snack, 'snack')} />
+              <RecipeCard
+                recipe={menu.snack}
+                showRemoveBtn={true}
+                handleRemoveRecipe={(e) => handleRemoveRecipe('snack')}
+                handleItemClick={(e) => handleRecipeClick(e, menu.snack, 'snack')}
+              />
             ) : (
               <div
                 className="flex items-center justify-center border border-gray-300 rounded-lg min-w-60 min-h-32 text-2xl text-gray-300"
@@ -138,7 +175,12 @@ function MenuCalendar() {
           </div>
           <div>
             {menu && menu.lunch ? (
-              <RecipeCard recipe={menu.lunch} handleItemClick={(e) => handleRecipeClick(e, menu.lunch, 'lunch')} />
+              <RecipeCard
+                recipe={menu.lunch}
+                showRemoveBtn={true}
+                handleRemoveRecipe={(e) => handleRemoveRecipe('lunch')}
+                handleItemClick={(e) => handleRecipeClick(e, menu.lunch, 'lunch')}
+              />
             ) : (
               <div
                 className="flex items-center justify-center border border-gray-300 rounded-lg min-w-60 min-h-32 text-2xl text-gray-300"
@@ -150,7 +192,12 @@ function MenuCalendar() {
           </div>
           <div>
             {menu && menu.dinner ? (
-              <RecipeCard recipe={menu.dinner} handleItemClick={(e) => handleRecipeClick(e, menu.dinner, 'dinner')} />
+              <RecipeCard
+                recipe={menu.dinner}
+                showRemoveBtn={true}
+                handleRemoveRecipe={(e) => handleRemoveRecipe('dinner')}
+                handleItemClick={(e) => handleRecipeClick(e, menu.dinner, 'dinner')}
+              />
             ) : (
               <div
                 className="flex items-center justify-center border border-gray-300 rounded-lg min-w-60 min-h-32 text-2xl text-gray-300"
