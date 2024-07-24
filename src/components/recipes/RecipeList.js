@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { FaPlus, FaTrash, FaFilter } from 'react-icons/fa';
+import { FaPlus, FaFilter } from 'react-icons/fa';
 import 'tailwindcss/tailwind.css';
 import RecipeCard from './RecipeCard';
 import RecipeFilter from './RecipeFilter';
@@ -9,7 +9,6 @@ import qs from 'qs';
 
 function RecipeList() {
   const [recipes, setRecipes] = useState([]);
-  const [selectedRecipes, setSelectedRecipes] = useState([]);
   const [groceryList, setGroceryList] = useState([]);
   const [showFilter, setShowFilter] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -33,23 +32,20 @@ function RecipeList() {
     }
   }, [page, selectedCategories, selectedCalories]);
 
-  // Load recipes on initial load
   useEffect(() => {
-    loadRecipes(true);  // Initial load with reset
+    loadRecipes(true);
   }, []);
 
-  // Load more recipes when page changes
   useEffect(() => {
     if (page > 0) {
-      loadRecipes();  // Load more when page changes
+      loadRecipes();
     }
   }, [page]);
 
-  // Load recipes when filters change
   useEffect(() => {
     if (selectedCategories.length > 0 || selectedCalories.length > 0) {
-      setPage(0);  // Reset page to 0
-      loadRecipes(true);  // Load recipes with reset
+      setPage(0);
+      loadRecipes(true);
     }
   }, [selectedCategories, selectedCalories]);
 
@@ -57,27 +53,15 @@ function RecipeList() {
     navigate('/recipes/add');
   };
 
-  const handleDeleteRecipes = () => {
-    selectedRecipes.forEach(id => {
-      axios.delete(`/api/recipes/${id}`)
-        .then(() => {
-          setRecipes(prevRecipes => prevRecipes.filter(recipe => recipe.id !== id));
-          setSelectedRecipes([]);
-        });
-    });
-  };
-
-  const handleSelectRecipe = (e, id) => {
-    e.stopPropagation();
-    setSelectedRecipes(prevState =>
-      prevState.includes(id)
-        ? prevState.filter(recipeId => recipeId !== id)
-        : [...prevState, id]
-    );
+  const handleDeleteRecipe = (id) => {
+    axios.delete(`/api/recipes/${id}`)
+      .then(() => {
+        setRecipes(prevRecipes => prevRecipes.filter(recipe => recipe.id !== id));
+      });
   };
 
   const handleGenerateGroceryList = () => {
-    axios.post('/api/recipes/generate-grocery-list', selectedRecipes)
+    axios.post('/api/recipes/generate-grocery-list', recipes.map(recipe => recipe.id))
       .then(response => {
         setGroceryList(response.data.items);
       });
@@ -122,9 +106,6 @@ function RecipeList() {
         <button onClick={() => setShowFilter(!showFilter)} className="bg-yellow-500 text-white px-4 py-2 mr-4 rounded-full flex items-center">
           <FaFilter className="mr-2" /> Фільтрувати
         </button>
-        <button onClick={handleDeleteRecipes} className="bg-red-500 text-white px-4 py-2 rounded-full flex items-center">
-          <FaTrash className="mr-2" /> Видалити
-        </button>
       </div>
       <div className="py-2">
           {showFilter && (
@@ -136,9 +117,9 @@ function RecipeList() {
           <RecipeCard
             key={recipe.id}
             recipe={recipe}
-            handleSelectRecipe={handleSelectRecipe}
-            selectedRecipes={selectedRecipes}
             handleItemClick={handleItemClick}
+            showRemoveBtn={true}
+            handleRemoveRecipe={() => handleDeleteRecipe(recipe.id)}
           />
         ))}
       </div>

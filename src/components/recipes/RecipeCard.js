@@ -31,14 +31,6 @@ function RecipeCard({ recipe, handleSelectRecipe, selectedRecipes, handleItemCli
 
   return (
     <div className="border rounded-lg p-3 shadow hover:shadow-lg flex min-w-60 relative">
-      {handleSelectRecipe && (
-        <input
-          type="checkbox"
-          onChange={(e) => handleSelectRecipe(e, recipe.id)}
-          checked={selectedRecipes.includes(recipe.id)}
-          className="mr-2"
-        />
-      )}
       {recipe.imageUrl && (
         <img
           src={`/uploads/${recipe.imageUrl}`}
@@ -60,7 +52,7 @@ function RecipeCard({ recipe, handleSelectRecipe, selectedRecipes, handleItemCli
       />
       {showRemoveBtn && (
         <FaTimes
-          onClick={() => handleRemoveRecipe(recipe)}
+          onClick={handleRemoveRecipe}
           className="text-red-500 text-2xl cursor-pointer absolute bottom-2 right-2"
         />
       )}
