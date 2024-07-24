@@ -38,23 +38,15 @@ function MenuCalendar() {
     fetchMenu(new Date());
   }, []);
 
-  const handleRecipeClick = (e, recipe) => {
+  const handleRecipeClick = (e, recipe, meal) => {
     setSelectedRecipe(recipe);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedRecipe(null);
-  };
-
-  const handleOpenRecipeListModal = (meal) => {
     setCurrentMeal(meal);
     setIsRecipeListModalOpen(true);
   };
 
   const handleCloseRecipeListModal = () => {
     setIsRecipeListModalOpen(false);
+    setSelectedRecipe(null);
     setCurrentMeal(null);
   };
 
@@ -122,11 +114,11 @@ function MenuCalendar() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             {menu && menu.breakfast ? (
-              <RecipeCard recipe={menu.breakfast} handleItemClick={handleRecipeClick} />
+              <RecipeCard recipe={menu.breakfast} handleItemClick={(e) => handleRecipeClick(e, menu.breakfast, 'breakfast')} />
             ) : (
               <div
                 className="flex items-center justify-center border border-gray-300 rounded-lg min-w-60 min-h-32 text-2xl text-gray-300"
-                onClick={() => handleOpenRecipeListModal('BREAKFAST')}
+                onClick={() => handleRecipeClick(null, null, 'breakfast')}
                >
                 Сніданок
               </div>
@@ -134,11 +126,11 @@ function MenuCalendar() {
           </div>
           <div>
             {menu && menu.snack ? (
-              <RecipeCard recipe={menu.snack} handleItemClick={handleRecipeClick} />
+              <RecipeCard recipe={menu.snack} handleItemClick={(e) => handleRecipeClick(e, menu.snack, 'snack')} />
             ) : (
               <div
                 className="flex items-center justify-center border border-gray-300 rounded-lg min-w-60 min-h-32 text-2xl text-gray-300"
-                onClick={() => handleOpenRecipeListModal('SNACK')}
+                onClick={() => handleRecipeClick(null, null, 'snack')}
                >
                 Перекус
               </div>
@@ -146,11 +138,11 @@ function MenuCalendar() {
           </div>
           <div>
             {menu && menu.lunch ? (
-              <RecipeCard recipe={menu.lunch} handleItemClick={handleRecipeClick} />
+              <RecipeCard recipe={menu.lunch} handleItemClick={(e) => handleRecipeClick(e, menu.lunch, 'lunch')} />
             ) : (
               <div
                 className="flex items-center justify-center border border-gray-300 rounded-lg min-w-60 min-h-32 text-2xl text-gray-300"
-                onClick={() => handleOpenRecipeListModal('LUNCH')}
+                onClick={() => handleRecipeClick(null, null, 'lunch')}
                >
                 Обід
               </div>
@@ -158,11 +150,11 @@ function MenuCalendar() {
           </div>
           <div>
             {menu && menu.dinner ? (
-              <RecipeCard recipe={menu.dinner} handleItemClick={handleRecipeClick} />
+              <RecipeCard recipe={menu.dinner} handleItemClick={(e) => handleRecipeClick(e, menu.dinner, 'dinner')} />
             ) : (
               <div
                 className="flex items-center justify-center border border-gray-300 rounded-lg min-w-60 min-h-32 text-2xl text-gray-300"
-                onClick={() => handleOpenRecipeListModal('DINNER')}
+                onClick={() => handleRecipeClick(null, null, 'dinner')}
                >
                 Вечеря
               </div>
@@ -170,16 +162,9 @@ function MenuCalendar() {
           </div>
         </div>
       </div>
-      {selectedRecipe && (
-        <RecipeModal
-          isModalOpen={isModalOpen}
-          handleCloseModal={handleCloseModal}
-          recipe={selectedRecipe}
-        />
-      )}
       <RecipeListModal
         isModalOpen={isRecipeListModalOpen}
-        currentCategory={currentMeal}
+        currentCategory={currentMeal == null ? null : currentMeal.toUpperCase()}
         handleCloseModal={handleCloseRecipeListModal}
         handleSelectRecipe={handleSelectRecipe}
       />

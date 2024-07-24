@@ -38,7 +38,7 @@ function RecipeModal({ isModalOpen, handleCloseModal, recipe }) {
         </div>
         <h4 className="text-xl font-bold mb-2">Інгредієнти:</h4>
         <ul className="list-disc pl-5 mb-4">
-          {ingredients.map((ingredient, index) => (
+          {ingredients && ingredients.map((ingredient, index) => (
             <li key={index} className="d-flex justify-content-between">
               <span>{ingredient.product.name}</span>
               <span>{ingredient.quantity === 0 ? 'за смаком' : ingredient.quantity} {ingredient.quantity === 0 ? '' : unitMapping[ingredient.product.unit]}</span>
