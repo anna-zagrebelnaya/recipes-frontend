@@ -5,7 +5,7 @@ import recipeCategoryMapping from './recipeCategoryMapping';
 import unitMapping from './unitMapping';
 
 function RecipeModal({ isModalOpen, handleCloseModal, recipe }) {
-  const { name, category, calories, ingredients, description, imageUrl } = recipe;
+  const { name, category, calories, portions, ingredients, description, imageUrl } = recipe;
 
   const parseHtmlToArray = (htmlString) => {
     const parser = new DOMParser();
@@ -33,7 +33,8 @@ function RecipeModal({ isModalOpen, handleCloseModal, recipe }) {
           <div className="flex flex-col justify-center">
             <span className="font-bold cursor-pointer">{name}</span>
             <span className="text-sm text-gray-500">{recipeCategoryMapping[category]}</span>
-            <span className="text-sm text-gray-500">{calories} ккал</span>
+            <span className="text-sm text-gray-500">{calories} ккал/п</span>
+            <span className="text-sm text-gray-500">{portions} порцій</span>
           </div>
         </div>
         <h4 className="text-xl font-bold mb-2">Інгредієнти:</h4>
