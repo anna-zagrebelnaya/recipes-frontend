@@ -17,6 +17,7 @@ function AddRecipe() {
   const [ingredients, setIngredients] = useState([{ productName: '', unit: '', quantity: 0 }]);
   const [description, setDescription] = useState('');
   const [image, setImage] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
   const [descriptionHtml, setDescriptionHtml] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [products, setProducts] = useState([]);
@@ -40,6 +41,7 @@ function AddRecipe() {
           })));
           setDescription(recipe.description);
           setImage(recipe.imageUrl);
+          setImageUrl(`/uploads/${recipe.imageUrl}`);
           setDescriptionHtml(parseHtmlToArray(recipe.description));
         });
     }
@@ -86,7 +88,11 @@ function AddRecipe() {
   };
 
   const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
+    const file = e.target.files[0];
+    setImage(file);
+    if (file) {
+        setImageUrl(URL.createObjectURL(file));
+    }
   };
 
   const handleImageClick = () => {
@@ -170,16 +176,16 @@ function AddRecipe() {
     category,
     calories,
     ingredients: ingredients.map(ingredient => ({
-                             product: {
-                                name: ingredient.productName,
-                                unit: ingredient.unit,
-                                category: ingredient.category
-                             },
-                             quantity: ingredient.quantity,
-                             unit: ingredient.unit
-                           })),
+      product: {
+        name: ingredient.productName,
+        unit: ingredient.unit,
+        category: ingredient.category
+      },
+      quantity: ingredient.quantity,
+      unit: ingredient.unit
+    })),
     description: `<ul>${descriptionHtml.map(item => `<li>${item}</li>`).join('')}</ul>`,
-    imageUrl: image instanceof File ? URL.createObjectURL(image) : `/uploads/${image}`
+    imageUrl: imageUrl
   };
 
   return (
@@ -222,12 +228,8 @@ function AddRecipe() {
         className="w-full h-48 border-2 border-dashed border-gray-300 flex justify-center items-center mb-4 cursor-pointer"
         onClick={handleImageClick}
       >
-        {image ? (
-          image instanceof File ? (
-            <img src={URL.createObjectURL(image)} alt="Recipe" className="max-w-full max-h-full" />
-          ) : (
-            <img src={"/uploads/" + image} alt="Recipe" className="max-w-full max-h-full" />
-          )
+        {imageUrl ? (
+          <img src={imageUrl} alt="Recipe" className="max-w-full max-h-full" />
         ) : (
           <span className="text-4xl text-gray-300">+</span>
         )}
