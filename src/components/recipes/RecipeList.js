@@ -86,14 +86,21 @@ function RecipeList() {
   }, [loading, hasMore]);
 
   useEffect(() => {
+    let debounceTimeout;
     const handleScroll = () => {
-      if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.scrollHeight - 50) {
-        loadMoreRecipes();
-      }
+      clearTimeout(debounceTimeout);
+      debounceTimeout = setTimeout(() => {
+        if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.scrollHeight - 50) {
+          loadMoreRecipes();
+        }
+      }, 200); // 200ms debounce interval
     };
 
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      clearTimeout(debounceTimeout);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, [loadMoreRecipes]);
 
   return (
