@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaPlus, FaFilter } from 'react-icons/fa';
@@ -14,21 +14,22 @@ function RecipeList() {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedCalories, setSelectedCalories] = useState([]);
   const [page, setPage] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
   const navigate = useNavigate();
+  const loadingRef = useRef(false);
+  const hasMoreRef = useRef(true);
 
   const loadRecipes = useCallback(async (reset = false) => {
-    setLoading(true);
+    if (loadingRef.current) return;
+    loadingRef.current = true;
     try {
       const response = await axios.get('/api/recipes', {
         params: { page, categories: selectedCategories, calories: selectedCalories },
         paramsSerializer: params => qs.stringify(params, { arrayFormat: 'repeat' })
       });
       setRecipes(prevRecipes => reset ? response.data : [...prevRecipes, ...response.data]);
-      setHasMore(response.data.length > 0);
+      hasMoreRef.current = response.data.length > 0;
     } finally {
-      setLoading(false);
+      loadingRef.current = false;
     }
   }, [page, selectedCategories, selectedCalories]);
 
@@ -80,10 +81,10 @@ function RecipeList() {
   };
 
   const loadMoreRecipes = useCallback(() => {
-    if (!loading && hasMore) {
+    if (!loadingRef.current && hasMoreRef.current) {
       setPage(prevPage => prevPage + 1);
     }
-  }, [loading, hasMore]);
+  }, []);
 
   useEffect(() => {
     let debounceTimeout;
@@ -130,7 +131,7 @@ function RecipeList() {
           />
         ))}
       </div>
-      {loading && <p>Завантаження...</p>}
+      {loadingRef.current && <p>Завантаження...</p>}
       <button onClick={handleGenerateGroceryList} className="bg-blue-500 text-white px-4 py-2 rounded-full mt-4">Створити список закупок</button>
       {groceryList.length > 0 && (
         <div className="mt-4">
