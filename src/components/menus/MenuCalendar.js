@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import axios from 'axios';
+import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import 'tailwindcss/tailwind.css';
 import RecipeCard from './../recipes/RecipeCard';
 import RecipeModal from './../recipes/RecipeModal';
@@ -14,12 +14,13 @@ function MenuCalendar() {
   const [isRecipeListModalOpen, setIsRecipeListModalOpen] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [currentMeal, setCurrentMeal] = useState(null);
+  const axiosPrivate = useAxiosPrivate();
 
   const fetchMenu = (date) => {
     const correctedDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
     const formattedDate = correctedDate.toISOString().split('T')[0];
 
-    axios.get(`/api/menus?date=${formattedDate}`)
+    axiosPrivate.get(`/api/menus?date=${formattedDate}`)
       .then(response => {
         setMenu(response.data);
       })
@@ -71,7 +72,7 @@ function MenuCalendar() {
     };
 
     if (menu && menu.id) {
-      axios.put(`/api/menus/${menu.id}`, menuData)
+      axiosPrivate.put(`/api/menus/${menu.id}`, menuData)
         .then(response => {
           setMenu(response.data);
         })
@@ -79,7 +80,7 @@ function MenuCalendar() {
           console.error('Error updating menu:', error);
         });
     } else {
-      axios.post('/api/menus', menuData)
+      axiosPrivate.post('/api/menus', menuData)
         .then(response => {
           setMenu(response.data);
         })
@@ -109,7 +110,7 @@ function MenuCalendar() {
       dinnerId: newMenu.dinner ? newMenu.dinner.id : null,
     };
 
-    axios.put(`/api/menus/${menu.id}`, menuData)
+    axiosPrivate.put(`/api/menus/${menu.id}`, menuData)
       .then((response) => {
         setMenu(response.data);
       })

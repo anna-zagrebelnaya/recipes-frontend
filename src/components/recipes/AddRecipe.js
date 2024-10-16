@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
+import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import 'tailwindcss/tailwind.css';
 import recipeCategoryMapping from './recipeCategoryMapping';
 import productCategoryMapping from './productCategoryMapping';
@@ -25,10 +25,11 @@ function AddRecipe() {
   const navigate = useNavigate();
   const { id } = useParams();
   const lastProductInputRef = useRef(null);
+  const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
     if (id) {
-      axios.get(`/api/recipes/${id}`)
+      axiosPrivate.get(`/api/recipes/${id}`)
         .then(response => {
           const recipe = response.data;
           setName(recipe.name);
@@ -49,7 +50,7 @@ function AddRecipe() {
     }
 
     // Fetch products once
-    axios.get('/api/products')
+    axiosPrivate.get('/api/products')
       .then(response => {
         setProducts(response.data);
       })
@@ -129,7 +130,7 @@ function AddRecipe() {
     }
 
     if (id) {
-      axios.put(`/api/recipes/${id}`, formData, {
+      axiosPrivate.put(`/api/recipes/${id}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
         .then(response => {
@@ -137,7 +138,7 @@ function AddRecipe() {
           navigate('/recipes');
         });
     } else {
-      axios.post('/api/recipes', formData, {
+      axiosPrivate.post('/api/recipes', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
         .then(response => {

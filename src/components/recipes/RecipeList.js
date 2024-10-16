@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { FaPlus, FaFilter } from 'react-icons/fa';
 import 'tailwindcss/tailwind.css';
 import RecipeCard from './RecipeCard';
 import RecipeFilter from './RecipeFilter';
 import qs from 'qs';
+import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 
 function RecipeList() {
   const [recipes, setRecipes] = useState([]);
@@ -17,12 +17,13 @@ function RecipeList() {
   const navigate = useNavigate();
   const loadingRef = useRef(false);
   const hasMoreRef = useRef(true);
+  const axiosPrivate = useAxiosPrivate();
 
   const loadRecipes = useCallback(async (reset = false) => {
     if (loadingRef.current) return;
     loadingRef.current = true;
     try {
-      const response = await axios.get('/api/recipes', {
+      const response = await axiosPrivate.get('/api/recipes', {
         params: { page, categories: selectedCategories, calories: selectedCalories },
         paramsSerializer: params => qs.stringify(params, { arrayFormat: 'repeat' })
       });
@@ -55,14 +56,14 @@ function RecipeList() {
   };
 
   const handleDeleteRecipe = (id) => {
-    axios.delete(`/api/recipes/${id}`)
+    axiosPrivate.delete(`/api/recipes/${id}`)
       .then(() => {
         setRecipes(prevRecipes => prevRecipes.filter(recipe => recipe.id !== id));
       });
   };
 
   const handleGenerateGroceryList = () => {
-    axios.post('/api/recipes/generate-grocery-list', recipes.map(recipe => recipe.id))
+    axiosPrivate.post('/api/recipes/generate-grocery-list', recipes.map(recipe => recipe.id))
       .then(response => {
         setGroceryList(response.data.items);
       });

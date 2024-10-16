@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { FaFilter } from 'react-icons/fa';
-import axios from 'axios';
+import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import RecipeCard from './../recipes/RecipeCard';
 import RecipeFilter from './../recipes/RecipeFilter';
@@ -13,6 +13,7 @@ function RecipeListModal({ isModalOpen, currentCategory, handleCloseModal, handl
   const [showFilter, setShowFilter] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedCalories, setSelectedCalories] = useState('ALL');
+  const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
     handleFilterChange([currentCategory]);
@@ -21,7 +22,7 @@ function RecipeListModal({ isModalOpen, currentCategory, handleCloseModal, handl
   const handleFilterChange = (categories, calories) => {
     setSelectedCategories(categories);
     setSelectedCalories(calories);
-    axios.get('/api/recipes', {
+    axiosPrivate.get('/api/recipes', {
       params: { categories: categories, calories: calories },
       paramsSerializer: params => qs.stringify(params, { arrayFormat: 'repeat' })
     })

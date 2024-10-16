@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import { FaEye, FaTimes } from 'react-icons/fa';
 import 'tailwindcss/tailwind.css';
 import recipeCategoryMapping from './recipeCategoryMapping';
 import RecipeModal from './RecipeModal';
 
-function RecipeCard({ recipe, handleSelectRecipe, selectedRecipes, handleItemClick, showRemoveBtn, handleRemoveRecipe }) {
+function RecipeCard({ recipe, handleItemClick, showRemoveBtn, handleRemoveRecipe }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [detailedRecipe, setDetailedRecipe] = useState(recipe);
+  const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
     setDetailedRecipe(recipe);
@@ -16,7 +17,7 @@ function RecipeCard({ recipe, handleSelectRecipe, selectedRecipes, handleItemCli
   const handleOpenModal = async () => {
     if (!detailedRecipe.ingredients || detailedRecipe.ingredients.length === 0) {
       try {
-        const response = await axios.get(`/api/recipes/${recipe.id}`);
+        const response = await axiosPrivate.get(`/api/recipes/${recipe.id}`);
         setDetailedRecipe(response.data);
       } catch (error) {
         console.error('Error fetching recipe details:', error);
