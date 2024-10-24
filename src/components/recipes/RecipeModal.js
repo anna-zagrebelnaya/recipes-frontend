@@ -25,7 +25,7 @@ function RecipeModal({ isModalOpen, handleCloseModal, recipe }) {
           {imageUrl && (
             <img
               src={`/uploads/${imageUrl}`}
-              alt="Recipe"
+              alt="Image"
               className="me-3 rounded-lg" // Bootstrap class for right margin
               style={{ maxWidth: '150px', height: 'auto' }} // Adjust the size of the image
             />

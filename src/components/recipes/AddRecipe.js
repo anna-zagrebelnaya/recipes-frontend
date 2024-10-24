@@ -190,7 +190,7 @@ function AddRecipe() {
       unit: ingredient.unit
     })),
     description: `<ul>${descriptionHtml.map(item => `<li>${item}</li>`).join('')}</ul>`,
-    imageUrl: imageUrl
+    imageUrl: image
   };
 
   return (
